@@ -42,5 +42,11 @@ namespace ChessApp.Model.Model
 
         }
 
+        public override int GetHashCode()//usado para localizar rapidamente objetos iguais e nenhuma posicao diferente pode gerar o mesmo numero
+        {
+            int Hash = Row * 8 + Column;
+            return Hash;
+        }
+
     }
 }
