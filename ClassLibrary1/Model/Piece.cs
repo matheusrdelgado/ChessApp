@@ -7,41 +7,33 @@ using System.Threading.Tasks;
 
 namespace ChessApp.Model.Model
 {
-    public class Piece
+    public abstract class Piece
     {
         #region Attributes
-        public PieceType pieceType { get; set; }
-        public Position currentPosition { get; set; }
-        public Color color { get; set; }
-        public bool hasMoved { get; set; }
+        public PieceType PieceType { get; set; }
+        public Position CurrentPosition { get; set; }
+        public Color Color { get; set; }
+        public bool HasMoved { get; set; }
         #endregion
 
         #region Constructor
-        public Piece(PieceType type, Position currentPosition, Color color)
+        protected Piece(PieceType type, Position currentPosition, Color color)
         {
-            pieceType = type;
-            currentPosition = currentPosition;
-            color = color;
-            hasMoved = false;
+            PieceType = type;
+            CurrentPosition = currentPosition;
+            Color = color;
+            HasMoved = false;
         }
         #endregion
         //método para obter os movimentos válidos
-        public List<Position> GetValidMoves(Board board)
+        public List<Position> GetValidMoves(Board board) //virtual pq as subclasses podem substituir
         {
-
-        }
-        
-        public bool CanMoveTo(Position pos, Board board)
-        {
-           
+            
         }
 
-        public Piece Clone()
-        {
-            return new Piece(this.pieceType, this.currentPosition, this.color)
-            {
-                hasMoved = this.hasMoved
-            };
-        }
+        public abstract bool CanMoveTo(Position pos, Board board); //abstrato pq todas as subclasses sao obrigadas a implementar
+
+
+        public abstract Piece Clone();
     }
 }

@@ -8,7 +8,7 @@ namespace ChessApp.Model.Model
 {
     public class Position
     {
-        #region Proprieties
+        #region Atributes
         public int Row {  get; set; }
         public int Column { get; set; }
         #endregion
