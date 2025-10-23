@@ -22,7 +22,7 @@ namespace ChessApp.Model.Model
         #endregion
 
         #region Methods
-        bool isValid()
+        public bool IsValid()
         {
             if (Row >= 0 && Row < 8 && Column >= 0 && Column < 8)
                 return true;
@@ -44,7 +44,7 @@ namespace ChessApp.Model.Model
 
         public override int GetHashCode()//usado para localizar rapidamente objetos iguais e nenhuma posicao diferente pode gerar o mesmo numero
         {
-            int Hash = Row * 8 + Column;
+            int Hash = Row * 8 + Column; //gera um numero 0-63 para cada posicao
             return Hash;
         }
 
