@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ChessApp.Model.Enums;
 
 namespace ChessApp.Model.Model
 {
@@ -96,6 +97,85 @@ namespace ChessApp.Model.Model
 
         }
 
+        public void ClearBoard()
+        {
+            for (int row = 0; row < 8; row++)
+            {
+                for (int col = 0; col < 8; col++)
+                {
+                    Piece piece = Squares[row, col];
+                    if (piece != null)
+                    {
+                        piece.CurrentPosition = null;
+                    }
+                    Squares[row, col] = null;
+                }
+            }
+        }
+
+        public List<Piece> GetAllPiecesOfColor(Color color)
+        {
+            List<Piece> pieces = new List<Piece>();
+            for (int row = 0; row < 8; row++)
+            {
+                for (int col = 0; col < 8; col++)
+                {
+                    Piece piece = Squares[row, col];
+                    if (piece != null && piece.Color == color)
+                    {
+                        pieces.Add(piece);
+                    }
+                }
+            }
+            return pieces;
+        }
+
+        public Position GetKingPosition(Color color)
+        {
+            for(int row = 0; row < 8; row++)
+            {
+                for(int col = 0; col < 8; col++)
+                {
+                    Piece piece= Squares[row, col];
+                    if(piece != null && piece.Color == color && piece.PieceType == PieceType.King)
+                    {
+                        return piece.CurrentPosition;
+                    }
+                  
+                }
+            }
+            throw new ArgumentException("King not found");
+        }
+
+        public void InitializeBoard()
+        {
+            ClearBoard();
+            for (int col = 0; col < 8; col++)
+            {
+                PlacePiece(new Pawn(Color.Black, 1, col));
+            }
+            PlacePiece(new Rook(Color.Black, 0, 0));
+            PlacePiece(new Rook(Color.Black, 0, 7));
+            PlacePiece(new Knight(Color.Black, 0, 1));
+            PlacePiece(new Knight(Color.Black, 0, 6));
+            PlacePiece(new Bishop(Color.Black, 0, 2));
+            PlacePiece(new Bishop(Color.Black, 0, 5));
+            PlacePiece(new King(Color.Black, 0, 4));
+            PlacePiece(new Queen(Color.Black, 0, 3));
+
+            for (int col = 0; col < 8; col++)
+            {
+                PlacePiece(new Pawn(Color.White, 6, col));
+            }
+            PlacePiece(new Rook(Color.White, 7, 0));
+            PlacePiece(new Rook(Color.White, 7, 7));
+            PlacePiece(new Knight(Color.White, 7, 1));
+            PlacePiece(new Knight(Color.White, 7, 6));
+            PlacePiece(new Bishop(Color.White, 7, 2));
+            PlacePiece(new Bishop(Color.White, 7, 5));
+            PlacePiece(new Queen(Color.White, 7, 3));
+            PlacePiece(new King(Color.White, 7, 4));
+        }
 
         #endregion
     }
