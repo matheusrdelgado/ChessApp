@@ -25,13 +25,25 @@ namespace ChessApp.Model.Model
             HasMoved = false;
         }
         #endregion
-        //método para obter os movimentos válidos
-        public List<Position> GetValidMoves(Board board); //virtual pq as subclasses podem substituir
-        
+        /// <summary>
+        /// Método para obter os movimentos válidos
+        /// </summary>
+        /// <param name="board"></param>
+        /// <returns>Lista de posições válidas</returns>
+        public abstract List<Position> GetValidMoves(Board board); //virtual pq as subclasses podem substituir
 
+        /// <summary>
+        /// Método para verificar as posições possíveis de movimento
+        /// </summary>
+        /// <param name="pos"></param>
+        /// <param name="board"></param>
+        /// <returns>Se o movimento para a posição é válido</returns>
         public abstract bool CanMoveTo(Position pos, Board board); //abstrato pq todas as subclasses sao obrigadas a implementar
 
-
-        public abstract Piece Clone();
+        /// <summary>
+        /// Método para clonar a peça
+        /// </summary>
+        /// <returns>Retorna a cópia da peça</returns>
+        public abstract Piece Clone(); //testar movimentos hipoteticos
     }
 }
