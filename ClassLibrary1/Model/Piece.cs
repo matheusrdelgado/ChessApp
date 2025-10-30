@@ -26,7 +26,7 @@ namespace ChessApp.Model.Model
         }
         #endregion
         //método para obter os movimentos válidos
-        public List<Position> GetValidMoves(Board board); //virtual pq as subclasses podem substituir
+        public abstract List<Position> GetValidMoves(Board board); //virtual pq as subclasses podem substituir
         
 
         public abstract bool CanMoveTo(Position pos, Board board); //abstrato pq todas as subclasses sao obrigadas a implementar
