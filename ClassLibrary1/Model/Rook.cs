@@ -10,10 +10,14 @@ namespace ChessApp.Model.Model
 {
     public class Rook : Piece
     {
+        #region Atributes
         public Rook(Position currentPosition, Color color)
            : base(PieceType.Rook, currentPosition, color)
         {
         }
+        #endregion
+
+        #region Methods
         public override bool CanMoveTo(Position to, Board board)
         {
             if (!to.IsValid())
@@ -26,7 +30,7 @@ namespace ChessApp.Model.Model
 
             if (rowDiff == 0 && columnDiff == 0)
                 return false;
-            if(rowDiff > 0 && columnDiff > 0)
+            if (rowDiff > 0 && columnDiff > 0)
                 return false;
 
             if (columnDiff == 0 && rowDiff > 0)
@@ -39,7 +43,7 @@ namespace ChessApp.Model.Model
                             return false;
 
                     }
-                } 
+                }
                 if (to.Row < CurrentPosition.Row)
                 {
                     for (int row = CurrentPosition.Row - 1; row > to.Row; row--)
@@ -85,10 +89,13 @@ namespace ChessApp.Model.Model
             return true;
         }
 
+
         public override Piece Clone()
         {
             return new Rook(CurrentPosition, Color);
         }
+
+
 
         public override List<Position> GetValidMoves(Board board)
         {
@@ -107,5 +114,6 @@ namespace ChessApp.Model.Model
             }
             return valid;
         }
+        #endregion
     }
 }
