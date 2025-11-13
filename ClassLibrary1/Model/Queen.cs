@@ -1,24 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 using ChessApp.Model.Enums;
 
 namespace ChessApp.Model.Model
 {
-    public class Bishop : Piece
+    public class Queen : Piece
     {
         #region Atributes
-        public Bishop(Position currentPosition, Color color)
-           : base(PieceType.Bishop, currentPosition, color)
+        public Queen(Position currentPosition, Color color)
+           : base(PieceType.Queen, currentPosition, color)
         {
         }
         #endregion
 
         #region Methods
-        public override bool CanMoveTo(Position to, Board board)
+        public override bool CanMoveTo(Position to, Board board) //clean code? nunca vi
         {
             if (board == null) return false;
             if (!to.IsValid())
@@ -31,7 +30,7 @@ namespace ChessApp.Model.Model
 
             if (to.Equals(CurrentPosition))
                 return false;
-            if (rowDiff != columnDiff)
+            if (rowDiff != 0 && columnDiff != 0 && rowDiff != columnDiff)
                 return false;
 
             if (!FreePath(CurrentPosition, to, board))
@@ -45,12 +44,11 @@ namespace ChessApp.Model.Model
             if (destination.Color == Color)
                 return false;
             return true;
-
         }
 
         public override Piece Clone()
         {
-            return new Bishop(CurrentPosition, Color);
+            return new Queen(CurrentPosition, Color);
         }
 
         public override List<Position> GetValidMoves(Board board)

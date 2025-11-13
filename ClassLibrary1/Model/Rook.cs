@@ -28,57 +28,14 @@ namespace ChessApp.Model.Model
             int rowDiff = Math.Abs(to.Row - CurrentPosition.Row);
             int columnDiff = Math.Abs(to.Column - CurrentPosition.Column);
 
-            if (rowDiff == 0 && columnDiff == 0)
+            if (to.Equals(CurrentPosition))
                 return false;
             if (rowDiff > 0 && columnDiff > 0)
                 return false;
 
-            if (columnDiff == 0 && rowDiff > 0)
-            {
-                if (to.Row > CurrentPosition.Row) {
-                    for (int row = CurrentPosition.Row + 1; row < to.Row; row++)
-                    {
-                        Piece piece = board.GetPiece(new Position(row, CurrentPosition.Column));
-                        if (piece != null)
-                            return false;
+            if (!FreePath(CurrentPosition, to, board))
+                return false;
 
-                    }
-                }
-                if (to.Row < CurrentPosition.Row)
-                {
-                    for (int row = CurrentPosition.Row - 1; row > to.Row; row--)
-                    {
-                        Piece piece = board.GetPiece(new Position(row, CurrentPosition.Column));
-                        if (piece != null)
-                            return false;
-
-                    }
-                }
-            }
-
-            if (columnDiff > 0 && rowDiff == 0)
-            {
-                if (to.Column > CurrentPosition.Column)
-                {
-                    for (int col = CurrentPosition.Column + 1; col < to.Column; col++)
-                    {
-                        Piece piece = board.GetPiece(new Position(CurrentPosition.Row, col));
-                        if (piece != null)
-                            return false;
-
-                    }
-                }
-                if (to.Column < CurrentPosition.Column)
-                {
-                    for (int col = CurrentPosition.Column - 1; col > to.Column; col--)
-                    {
-                        Piece piece = board.GetPiece(new Position(CurrentPosition.Row, col));
-                        if (piece != null)
-                            return false;
-
-                    }
-                }
-            }
             Piece destination = board.GetPiece(to);
 
             if (destination == null)
