@@ -104,6 +104,11 @@ namespace ChessApp.Model.Model
            
         }
 
+        /// <summary>
+        /// Método para verificar se é possivel realizar o roque longo
+        /// </summary>
+        /// <param name="board"></param>
+        /// <returns>um booleano</returns>
         public bool CanCastleLong(Board board)
         {
             if (board == null) return false;
