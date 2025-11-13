@@ -14,6 +14,7 @@ namespace ChessApp.Model.Model
 
 
     }
+}
 
 
 

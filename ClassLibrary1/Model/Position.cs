@@ -64,3 +64,4 @@ namespace ChessApp.Model.Model
 
     }
 }
+#endregion

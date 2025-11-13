@@ -9,10 +9,14 @@ namespace ChessApp.Model.Model
 {
     public class King : Piece
     {
+        #region Atributes
         public King(Position currentPosition, Color color)
             : base(PieceType.King, currentPosition, color)
         {
         }
+        #endregion
+
+        #region Methods
         public override Piece Clone()
         {
             return new King(CurrentPosition, Color);
@@ -99,5 +103,40 @@ namespace ChessApp.Model.Model
             } return false;
            
         }
+
+        public bool CanCastleLong(Board board)
+        {
+            if (board == null) return false;
+
+            if (HasMoved) return false;
+
+            int row = CurrentPosition.Row;
+            if (Color == Color.Black)
+                if (row != 0)
+                    return false;
+            if (Color == Color.White)
+                if (row != 7)
+                    return false;
+
+            int column = CurrentPosition.Column;
+            if (column != 4)
+                return false;
+
+
+            Piece rook = board.GetPiece(new Position(CurrentPosition.Row, 0));
+            if (rook != null && rook.Color == Color && rook.PieceType == PieceType.Rook && !rook.HasMoved)
+            {
+                for (int col = CurrentPosition.Column - 1; col > 0; col--)
+                {
+                    Piece piece = board.GetPiece(new Position(CurrentPosition.Row, col));
+                    if (piece != null)
+                        return false;
+                }
+                return true;
+            }
+            return false;
+
+        }
+        #endregion
     }
 }
