@@ -20,11 +20,7 @@ namespace ChessApp.Model.Model
         #region Methods
         public override bool CanMoveTo(Position to, Board board)
         {
-            if (!to.IsValid())
-            {
-                throw new ArgumentException("Invalid Position");
-            }
-
+            if (!to.IsValid()) return false;
             int rowDiff = Math.Abs(to.Row - CurrentPosition.Row);
             int columnDiff = Math.Abs(to.Column - CurrentPosition.Column);
 

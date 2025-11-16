@@ -17,13 +17,10 @@ namespace ChessApp.Model.Model
         #endregion
 
         #region Methods
-        public override bool CanMoveTo(Position to, Board board) //clean code? nunca vi
+        public override bool CanMoveTo(Position to, Board board)
         {
             if (board == null) return false;
-            if (!to.IsValid())
-            {
-                throw new ArgumentException("Invalid Position");
-            }
+            if (!to.IsValid()) return false;
 
             int rowDiff = Math.Abs(to.Row - CurrentPosition.Row);
             int columnDiff = Math.Abs(to.Column - CurrentPosition.Column);

@@ -9,7 +9,7 @@ namespace ChessApp.Model.Model
 {
     public class Board
     {
-        public Piece[,] Squares { get; set; }
+        private Piece[,] Squares { get; set; }
 
         #region Constructor
         public Board() //construtor nao recebe parametros para iniciar o array dentro do construtor

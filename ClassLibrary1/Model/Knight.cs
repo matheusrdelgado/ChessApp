@@ -1,38 +1,29 @@
-﻿using System;
+﻿using ChessApp.Model.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security;
 using System.Text;
 using System.Threading.Tasks;
-using ChessApp.Model.Enums;
 
 namespace ChessApp.Model.Model
 {
-    public class Bishop : Piece
+    public class Knight : Piece
     {
-        #region Atributes
-        public Bishop(Position currentPosition, Color color)
-           : base(PieceType.Bishop, currentPosition, color)
+        public Knight(Position currentPosition, Color color) 
+            : base(PieceType.Knight, currentPosition, color)
         {
         }
-        #endregion
 
-        #region Methods
         public override bool CanMoveTo(Position to, Board board)
         {
             if (board == null) return false;
             if (!to.IsValid()) return false;
 
             int rowDiff = Math.Abs(to.Row - CurrentPosition.Row);
-            int columnDiff = Math.Abs(to.Column - CurrentPosition.Column);
+            int columnDiff = Math.Abs(to.Column - CurrentPosition.Column);  
 
-            if (to.Equals(CurrentPosition))
-                return false;
-            if (rowDiff != columnDiff)
-                return false;
-
-            if (!FreePath(CurrentPosition, to, board))
-                return false;
+            if (to.Equals(CurrentPosition)) return false;
+            if(!((rowDiff == 2 && columnDiff == 1) || (rowDiff == 1 && columnDiff == 2))) return false;
 
             Piece destination = board.GetPiece(to);
 
@@ -42,12 +33,11 @@ namespace ChessApp.Model.Model
             if (destination.Color == Color)
                 return false;
             return true;
-
         }
 
         public override Piece Clone()
         {
-            return new Bishop(CurrentPosition, Color);
+            return new Knight(CurrentPosition, Color);
         }
 
         public override List<Position> GetValidMoves(Board board)
@@ -67,6 +57,5 @@ namespace ChessApp.Model.Model
             }
             return valid;
         }
-        #endregion
     }
 }
