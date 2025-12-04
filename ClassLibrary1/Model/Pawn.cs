@@ -43,6 +43,7 @@ namespace ChessApp.Model.Model
 
             if (columnDiff == 1 && rowDiff == 1 && destination == null) return false;
             if (columnDiff == 1 && rowDiff == 1 && destination != null && destination.Color == Color) return false;
+            return true;
         }
 
         public override Piece Clone()
@@ -66,6 +67,20 @@ namespace ChessApp.Model.Model
                 }
             }
             return valid;
+        }
+
+        public bool CanPromote()
+        {
+            if(Color == Color.White && CurrentPosition.Row == 0)
+                return true;
+            if (Color == Color.Black && CurrentPosition.Row == 7)
+                return true;
+            return false;
+        }
+
+        public List<PieceType> GetPromotionOptions()
+        {
+            return new List<PieceType> { PieceType.Queen, PieceType.Rook, PieceType.Bishop, PieceType.Knight };
         }
     }
 }

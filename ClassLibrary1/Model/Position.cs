@@ -62,6 +62,13 @@ namespace ChessApp.Model.Model
             return Hash;
         }
 
+        public string ToChessNotation()
+        {
+            char column = (char)('a' + Column);
+            int row = 8 - Row; 
+            return $"{column}{row}";
+        }
+
     }
 }
 #endregion
