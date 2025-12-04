@@ -38,7 +38,7 @@ namespace ChessApp.Model.Model
             if (rowDiff > 1 && rowDiff < 3 && HasMoved == true) return false;
             if(columnDiff > 1) return false;
             if(HasMoved == true && rowDiff > 1 ) return false;
-            if(rowDiff == 1 && destination != null) return false;
+            if (rowDiff == 1 && columnDiff == 0 && destination != null) return false;
 
 
             if (columnDiff == 1 && rowDiff == 1 && destination == null) return false;
