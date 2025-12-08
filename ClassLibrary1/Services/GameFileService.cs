@@ -32,7 +32,7 @@ namespace ChessApp.Model.Services
             File.WriteAllText(filePath, jsonString);
         }
 
-        public Game LoadGame(string fileName, Movement? movement)
+        public Game LoadGame(string fileName)
         {
             if (!fileName.EndsWith(".json"))
                 fileName += ".json";
@@ -45,7 +45,11 @@ namespace ChessApp.Model.Services
             var movements = JsonSerializer.Deserialize<List<Movement>>(jsonString);
             Game game = new Game();
             foreach (var move in movements)
+            {
                 game.Board.MovePiece(move.From, move.To);
+                game.MoveHistory.Add(move);
+            }
+
             return game;
         }
     }
