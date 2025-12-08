@@ -62,9 +62,13 @@ namespace ChessApp.Model.Model
             return Hash;
         }
 
+        /// <summary>
+        /// Método para converter a posição para notação de xadrez  
+        /// </summary>
+        /// <returns></returns>
         public string ToChessNotation()
         {
-            char column = (char)('a' + Column);
+            char column = (char)('a' + Column); 
             int row = 8 - Row; 
             return $"{column}{row}";
         }
