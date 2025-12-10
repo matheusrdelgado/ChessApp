@@ -10,12 +10,12 @@ namespace ChessApp.Model.Model
 {
     public class Game
     {
-        public Board Board { get; set; }
+        public Board Board { get; private set; }
         public List<Piece> WhiteCapturedPieces { get; private set; } = new List<Piece>();
         public List<Piece> BlackCapturedPieces { get; private set; } = new List<Piece>();
         public List<Movement> MoveHistory { get; private set; } = new List<Movement>();
-        public Color CurrentTurn { get; set; } = Color.White;
-        public GameState State { get; set; } = GameState.Playing;
+        public Color CurrentTurn { get; private set; } = Color.White;
+        public GameState State { get; private set; } = GameState.Playing;
 
         public Game()
         {
