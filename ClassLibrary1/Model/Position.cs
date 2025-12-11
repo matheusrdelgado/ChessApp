@@ -72,6 +72,13 @@ namespace ChessApp.Model.Model
             int row = 8 - Row; 
             return $"{column}{row}";
         }
+        public static Position FromChessNotation(string notation)
+        {
+            int col = notation[0] - 'a';
+            int row = 8 - (notation[1] - '0');
+
+            return new Position(row, col);
+        }
 
     }
 }

@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ChessApp.Model.Enums;
+using System.Text;
 
 namespace ChessApp.Model.Model
 {
@@ -96,8 +98,8 @@ namespace ChessApp.Model.Model
                 throw new ArgumentException("Invalid Position");
             }
 
-            
-         
+
+
         }
 
         /// <summary>
@@ -117,11 +119,11 @@ namespace ChessApp.Model.Model
             {
                 throw new ArgumentException("Invalid 'to' position");
             }
-       
+
             Piece pieceToMove = GetPiece(from);
             if (pieceToMove == null)
             {
-                 throw new ArgumentException("No piece found at the source position");
+                throw new ArgumentException("No piece found at the source position");
             }
             Piece captured = RemovePiece(to);
             RemovePiece(from);
@@ -179,16 +181,16 @@ namespace ChessApp.Model.Model
         /// <exception cref="ArgumentException"></exception>
         public Position GetKingPosition(Color color)
         {
-            for(int row = 0; row < 8; row++)
+            for (int row = 0; row < 8; row++)
             {
-                for(int col = 0; col < 8; col++)
+                for (int col = 0; col < 8; col++)
                 {
-                    Piece piece= Squares[row, col];
-                    if(piece != null && piece.Color == color && piece.PieceType == PieceType.King)
+                    Piece piece = Squares[row, col];
+                    if (piece != null && piece.Color == color && piece.PieceType == PieceType.King)
                     {
                         return piece.CurrentPosition;
                     }
-                  
+
                 }
             }
             throw new ArgumentException("King not found");
@@ -227,6 +229,73 @@ namespace ChessApp.Model.Model
             PlacePiece(new Rook(new Position(7, 7), Color.White));
         }
 
-        #endregion
+        public string GetFen(Color CurrentTurn)
+        {
+            StringBuilder fen = new StringBuilder();
+
+            for (int row = 0; row < 8; row++) //tabuleiro
+            {
+                int emptyCount = 0;
+                for (int col = 0; col < 8; col++)
+                {
+                    Piece piece = Squares[row, col];
+                    if (piece == null)
+                    {
+                        emptyCount++;
+                    }
+                    else
+                    {
+                        if (emptyCount > 0)
+                        {
+                            fen.Append(emptyCount);
+                            emptyCount = 0;
+                        }
+                        char pieceChar = GetPieceChar(piece);
+                        fen.Append(pieceChar);
+                    }
+                }
+                if (emptyCount > 0) fen.Append(emptyCount);
+                if (row < 7) fen.Append('/');
+            }
+            fen.Append(CurrentTurn == Color.White ? " w " : " b "); //quem joga
+
+            string castling = "";
+
+            Piece wKing = GetPiece(new Position(7, 4)); //rei branco
+            if (wKing is King && !wKing.HasMoved)
+            {
+                Piece wRookKing = GetPiece(new Position(7, 7));
+                Piece wRookQueen = GetPiece(new Position(7, 0));
+                if (wRookKing is Rook && !wRookKing.HasMoved) castling += "K";
+                if (wRookQueen is Rook && !wRookQueen.HasMoved) castling += "Q";
+            }
+            Piece bKing = GetPiece(new Position(0, 4)); //rei preto
+            if (bKing is King && !bKing.HasMoved)
+            {
+                Piece bRookKing = GetPiece(new Position(0, 7));
+                Piece bRookQueen = GetPiece(new Position(0, 0));
+                if (bRookKing is Rook && !bRookKing.HasMoved) castling += "k";
+                if (bRookQueen is Rook && !bRookQueen.HasMoved) castling += "q";
+            }
+            fen.Append(string.IsNullOrEmpty(castling) ? "-" : castling);
+            fen.Append(" - 0 1");//simplificando en passant e contadores
+            return fen.ToString();
+        }
+        private char GetPieceChar(Piece piece)
+        {
+            char c = ' ';
+            switch (piece.PieceType)
+            {
+                case PieceType.Pawn: c = 'p'; break;
+                case PieceType.Rook: c = 'r'; break;
+                case PieceType.Knight: c = 'n'; break;
+                case PieceType.Bishop: c = 'b'; break;
+                case PieceType.Queen: c = 'q'; break;
+                case PieceType.King: c = 'k'; break;
+            }
+            return piece.Color == Color.White ? char.ToUpper(c) : c;
+
+            #endregion
+        }
     }
 }
