@@ -229,7 +229,7 @@ namespace ChessApp.Model.Model
             PlacePiece(new Rook(new Position(7, 7), Color.White));
         }
 
-        public string GetFen(Color CurrentTurn)
+        public string GetFen(Color CurrentTurn, Position enPassantSquare = null)
         {
             StringBuilder fen = new StringBuilder();
 
@@ -278,7 +278,18 @@ namespace ChessApp.Model.Model
                 if (bRookQueen is Rook && !bRookQueen.HasMoved) castling += "q";
             }
             fen.Append(string.IsNullOrEmpty(castling) ? "-" : castling);
-            fen.Append(" - 0 1");//simplificando en passant e contadores
+            fen.Append(" ");
+
+            if (enPassantSquare != null)
+            {
+                fen.Append(enPassantSquare.ToChessNotation().ToLower());
+            }
+            else
+            {
+                fen.Append("-");
+            }
+
+            fen.Append(" 0 1");
             return fen.ToString();
         }
         private char GetPieceChar(Piece piece)

@@ -214,6 +214,26 @@ namespace ChessApp.Model.Model
             }
             return false;
         }
+        private Position GetEnPassantTarget()
+        {
+            Movement lastMove = MoveHistory.LastOrDefault();
+
+            if (lastMove == null) return null;
+
+            if (lastMove.PieceMoved.PieceType == PieceType.Pawn)
+            {
+                
+                int rowDiff = lastMove.From.Row - lastMove.To.Row; // verifica se andou duas casas, ou seja, diferenca de 2 linhas
+
+                if (Math.Abs(rowDiff) == 2) //se andou duas casas 
+                {
+                    int middleRow = (lastMove.From.Row + lastMove.To.Row) / 2;
+                    return new Position(middleRow, lastMove.From.Column);
+                }
+            }
+
+            return null;
+        }
 
     }
 }

@@ -23,9 +23,10 @@ namespace ChessApp.Model.Services
 
             //inicia o motor do stockfish
             stockfishProcess.StandardInput.WriteLine("uci");
+        }
 
-            public async Task<string> GetBestMoveAsync(string fen)
-            {
+        public async Task<string> GetBestMoveAsync(string fen)
+        {
             await stockfishProcess.StandardInput.WriteLineAsync($"position fen {fen}"); //envia a posicao atual
             await stockfishProcess.StandardInput.WriteLineAsync("go movetime 500"); //manda a engine pensar 500ms (depois definir aqui a dificuldade do bot)
 
@@ -40,7 +41,7 @@ namespace ChessApp.Model.Services
                 }
             }
             return null;
-            }
+        }
         public void Close() //fecha o processo do stockfish
         {
             if (!stockfishProcess.HasExited)
