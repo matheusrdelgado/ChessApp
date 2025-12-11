@@ -193,29 +193,29 @@ namespace ChessApp.Model.Model
             ClearBoard();
             for (int col = 0; col < 8; col++)
             {
-                PlacePiece(new Pawn(Color.Black, 1, col));
+                PlacePiece(new Pawn(new Position(1, col), Color.Black), new Position(1, col));
             }
-            PlacePiece(new Rook(Color.Black, 0, 0));
-            PlacePiece(new Rook(Color.Black, 0, 7));
-            PlacePiece(new Knight(Color.Black, 0, 1));
-            PlacePiece(new Knight(Color.Black, 0, 6));
-            PlacePiece(new Bishop(Color.Black, 0, 2));
-            PlacePiece(new Bishop(Color.Black, 0, 5));
-            PlacePiece(new King(Color.Black, 0, 4));
-            PlacePiece(new Queen(Color.Black, 0, 3));
+            PlacePiece(new Rook(new Position(0, 0), Color.Black), new Position(0, 0));
+            PlacePiece(new Knight(new Position(0, 1), Color.Black), new Position(0, 1));
+            PlacePiece(new Bishop(new Position(0, 2), Color.Black), new Position(0, 2));
+            PlacePiece(new Queen(new Position(0, 3), Color.Black), new Position(0, 3));
+            PlacePiece(new King(new Position(0, 4), Color.Black), new Position(0, 4));
+            PlacePiece(new Bishop(new Position(0, 5), Color.Black), new Position(0, 5));
+            PlacePiece(new Knight(new Position(0, 6), Color.Black), new Position(0, 6));
+            PlacePiece(new Rook(new Position(0, 7), Color.Black), new Position(0, 7));
 
             for (int col = 0; col < 8; col++)
             {
-                PlacePiece(new Pawn(Color.White, 6, col));
+                PlacePiece(new Pawn(new Position(6, col), Color.White), new Position(6, col));
             }
-            PlacePiece(new Rook(Color.White, 7, 0));
-            PlacePiece(new Rook(Color.White, 7, 7));
-            PlacePiece(new Knight(Color.White, 7, 1));
-            PlacePiece(new Knight(Color.White, 7, 6));
-            PlacePiece(new Bishop(Color.White, 7, 2));
-            PlacePiece(new Bishop(Color.White, 7, 5));
-            PlacePiece(new Queen(Color.White, 7, 3));
-            PlacePiece(new King(Color.White, 7, 4));
+            PlacePiece(new Rook(new Position(7, 0), Color.White), new Position(7, 0));
+            PlacePiece(new Knight(new Position(7, 1), Color.White), new Position(7, 1));
+            PlacePiece(new Bishop(new Position(7, 2), Color.White), new Position(7, 2));
+            PlacePiece(new Queen(new Position(7, 3), Color.White), new Position(7, 3));
+            PlacePiece(new King(new Position(7, 4), Color.White), new Position(7, 4));
+            PlacePiece(new Bishop(new Position(7, 5), Color.White), new Position(7, 5));
+            PlacePiece(new Knight(new Position(7, 6), Color.White), new Position(7, 6));
+            PlacePiece(new Rook(new Position(7, 7), Color.White), new Position(7, 7));
         }
 
         #endregion
