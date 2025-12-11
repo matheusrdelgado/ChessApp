@@ -63,6 +63,15 @@ namespace ChessApp.Model.Model
         }
 
         /// <summary>
+        /// Método para dar a posicao da peça para o outro PlacePiece
+        /// </summary>
+        /// <param name="piece"></param>
+        public void PlacePiece(Piece piece)
+        {
+            PlacePiece(piece, piece.CurrentPosition);
+        }
+
+        /// <summary>
         /// Remove uma peça da posição recebida por parâmetro
         /// </summary>
         /// <param name="pos"></param>
@@ -193,29 +202,29 @@ namespace ChessApp.Model.Model
             ClearBoard();
             for (int col = 0; col < 8; col++)
             {
-                PlacePiece(new Pawn(new Position(1, col), Color.Black), new Position(1, col));
+                PlacePiece(new Pawn(new Position(1, col), Color.Black)); //a posicao esta escrita duas vezes porque o PlacePiece pede a posicao como segundo parametro
             }
-            PlacePiece(new Rook(new Position(0, 0), Color.Black), new Position(0, 0));
-            PlacePiece(new Knight(new Position(0, 1), Color.Black), new Position(0, 1));
-            PlacePiece(new Bishop(new Position(0, 2), Color.Black), new Position(0, 2));
-            PlacePiece(new Queen(new Position(0, 3), Color.Black), new Position(0, 3));
-            PlacePiece(new King(new Position(0, 4), Color.Black), new Position(0, 4));
-            PlacePiece(new Bishop(new Position(0, 5), Color.Black), new Position(0, 5));
-            PlacePiece(new Knight(new Position(0, 6), Color.Black), new Position(0, 6));
-            PlacePiece(new Rook(new Position(0, 7), Color.Black), new Position(0, 7));
+            PlacePiece(new Rook(new Position(0, 0), Color.Black));
+            PlacePiece(new Knight(new Position(0, 1), Color.Black));
+            PlacePiece(new Bishop(new Position(0, 2), Color.Black));
+            PlacePiece(new Queen(new Position(0, 3), Color.Black));
+            PlacePiece(new King(new Position(0, 4), Color.Black));
+            PlacePiece(new Bishop(new Position(0, 5), Color.Black));
+            PlacePiece(new Knight(new Position(0, 6), Color.Black));
+            PlacePiece(new Rook(new Position(0, 7), Color.Black));
 
             for (int col = 0; col < 8; col++)
             {
-                PlacePiece(new Pawn(new Position(6, col), Color.White), new Position(6, col));
+                PlacePiece(new Pawn(new Position(6, col), Color.White));
             }
-            PlacePiece(new Rook(new Position(7, 0), Color.White), new Position(7, 0));
-            PlacePiece(new Knight(new Position(7, 1), Color.White), new Position(7, 1));
-            PlacePiece(new Bishop(new Position(7, 2), Color.White), new Position(7, 2));
-            PlacePiece(new Queen(new Position(7, 3), Color.White), new Position(7, 3));
-            PlacePiece(new King(new Position(7, 4), Color.White), new Position(7, 4));
-            PlacePiece(new Bishop(new Position(7, 5), Color.White), new Position(7, 5));
-            PlacePiece(new Knight(new Position(7, 6), Color.White), new Position(7, 6));
-            PlacePiece(new Rook(new Position(7, 7), Color.White), new Position(7, 7));
+            PlacePiece(new Rook(new Position(7, 0), Color.White));
+            PlacePiece(new Knight(new Position(7, 1), Color.White));
+            PlacePiece(new Bishop(new Position(7, 2), Color.White));
+            PlacePiece(new Queen(new Position(7, 3), Color.White));
+            PlacePiece(new King(new Position(7, 4), Color.White));
+            PlacePiece(new Bishop(new Position(7, 5), Color.White));
+            PlacePiece(new Knight(new Position(7, 6), Color.White));
+            PlacePiece(new Rook(new Position(7, 7), Color.White));
         }
 
         #endregion
