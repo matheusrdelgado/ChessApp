@@ -174,6 +174,47 @@ namespace ChessApp.Model.Model
             CurrentTurn = CurrentTurn == Color.White ? Color.Black : Color.White;
         }
 
+        private void CheckForGameOver()
+        {
+            if (!HasLegalMoves(CurrentTurn))
+            {
+                if (IsCheck(CurrentTurn))
+                {
+                    State = GameState.Checkmate;
+                }
+                else
+                {
+                    State = GameState.Stalemate;
+                }
+            }
+        }
+
+        private bool HasLegalMoves(Color color)
+        {
+            List<Piece> pieces = Board.GetAllPiecesOfColor(color);
+            foreach (Piece piece in pieces)
+            {
+                List<Position> candidates = piece.GetValidMoves(Board);
+                foreach (Position to in candidates)
+                {
+                    Position from = piece.CurrentPosition;
+                    bool wasMoved = piece.HasMoved;
+                    Piece captured = Board.MovePiece(from, to);
+
+                    bool kingSafe = !IsCheck(color);
+
+                    Board.MovePiece(to, from);
+                    piece.HasMoved = wasMoved;
+                    if (captured != null)
+                        Board.PlacePiece(captured, to);
+
+                    if (kingSafe)
+                        return true;
+                }
+            }
+            return false;
+        }
+
     }
 }
 
