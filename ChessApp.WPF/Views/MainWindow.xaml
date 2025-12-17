@@ -31,10 +31,13 @@
                     <DataTemplate>
                         <Grid Background="{Binding BackgroundColor}">
 
+                            <Grid.InputBindings>
+                                <MouseBinding Gesture="LeftClick" Command="{Binding ClickCommand}"/>
+                            </Grid.InputBindings>
+
                             <Image Source="{Binding PieceImage}" 
                                    RenderOptions.BitmapScalingMode="HighQuality"
                                    Margin="0"/>
-
                         </Grid>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>

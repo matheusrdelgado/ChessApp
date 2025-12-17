@@ -25,6 +25,9 @@ namespace ChessApp.Model.Model
             int rowDiff = Math.Abs(to.Row - CurrentPosition.Row);
             int columnDiff = Math.Abs(to.Column - CurrentPosition.Column);
 
+            if (rowDiff > 2) return false;
+            if (HasMoved && rowDiff > 1) return false;
+
             if (Color == Color.White && to.Row >= CurrentPosition.Row) return false;
             if (Color == Color.Black && to.Row <= CurrentPosition.Row) return false;
 

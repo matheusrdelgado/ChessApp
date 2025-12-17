@@ -13,6 +13,7 @@ namespace ChessApp.WPF.ViewModel
     {
         public Game Game { get; private set; }
         public ObservableCollection<SquareViewModel> BoardSquares { get; set; }
+        private SquareViewModel _selectedSquare;
 
         public GameViewModel()
         {
@@ -33,7 +34,49 @@ namespace ChessApp.WPF.ViewModel
                 {
                     var square = new SquareViewModel(new Position(row, col));
 
+                    square.ClickCommand = new RelayCommand(param => OnSquareClicked(square));
+
                     BoardSquares.Add(square);
+                }
+            }
+        }
+
+        private void OnSquareClicked(SquareViewModel clickedSquare)
+        {
+            if(_selectedSquare == null)
+            {
+                var piece = Game.Board.GetPiece(clickedSquare.Position);
+                if(piece != null)
+                {
+                    if(piece.Color == Game.CurrentTurn)
+                    {
+                        _selectedSquare = clickedSquare;
+                        _selectedSquare.Highlight();
+                    }
+                }
+            }
+            else
+            {
+                if(_selectedSquare == clickedSquare)
+                {
+                    _selectedSquare.ResetColor();
+                    _selectedSquare = null;
+                    return;
+                }
+
+                try
+                {
+                    Game.MakeMove(_selectedSquare.Position, clickedSquare.Position);
+                    RefreshBoard();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "Jogada Inválida");
+                }
+                finally
+                {
+                    _selectedSquare.ResetColor();
+                    _selectedSquare = null;
                 }
             }
         }

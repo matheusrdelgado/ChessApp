@@ -9,6 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using ChessApp.Model.Enums;
 using Color = ChessApp.Model.Enums.Color;
+using System.Windows.Input;
 
 namespace ChessApp.WPF.ViewModel
 {
@@ -16,6 +17,7 @@ namespace ChessApp.WPF.ViewModel
     {
         public Position Position { get; private set; }
         public Brush BackgroundColor { get; set; }
+        public ICommand ClickCommand { get; set; }
 
         public SquareViewModel(Position position)
         {
@@ -86,7 +88,7 @@ namespace ChessApp.WPF.ViewModel
                         PieceImage = "/Assets/bN.png";
                         break;
                     case PieceType.Bishop:
-                        PieceImage = "\\Assets\\bB.png";
+                        PieceImage = "/Assets/bB.png";
                         break;
                     case PieceType.Queen:
                         PieceImage = "/Assets/bQ.png";
@@ -96,6 +98,21 @@ namespace ChessApp.WPF.ViewModel
                         break;
                 }
             }
+        }
+        public void Highlight()
+        {
+            BackgroundColor = Brushes.Green;
+        }
+
+        public void ResetColor()
+        {
+            var converter = new BrushConverter();
+            int soma = Position.Row + Position.Column;
+
+            if (soma % 2 == 0)
+                BackgroundColor = (Brush)converter.ConvertFromString("#dae4ee");
+            else
+                BackgroundColor = (Brush)converter.ConvertFromString("8ca2ad");
         }
     }
 }
