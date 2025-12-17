@@ -24,7 +24,7 @@ namespace ChessApp.WPF.ViewModel
             set
             {
                 _backGroundColor = value;
-                OnPropertyChanged(nameof(Position));
+                OnPropertyChanged();
             }
         }
         public ICommand ClickCommand { get; set; }
