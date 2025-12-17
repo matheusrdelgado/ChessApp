@@ -22,10 +22,12 @@ namespace ChessApp.WPF.ViewModel
             Position = position;
             int soma = position.Row + position.Column;
 
+            var converter = new BrushConverter();
+
             if (soma % 2 == 0)
-                BackgroundColor = Brushes.Beige;
+                BackgroundColor = (Brush)converter.ConvertFromString("#dae4ee");
             else
-                BackgroundColor = Brushes.Brown;
+                BackgroundColor = (Brush)converter.ConvertFromString("#8ca2ad");
         }
 
         private string _pieceImage;

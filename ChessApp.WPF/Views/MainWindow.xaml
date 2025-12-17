@@ -33,7 +33,7 @@
 
                             <Image Source="{Binding PieceImage}" 
                                    RenderOptions.BitmapScalingMode="HighQuality"
-                                   Margin="5"/>
+                                   Margin="0"/>
 
                         </Grid>
                     </DataTemplate>
