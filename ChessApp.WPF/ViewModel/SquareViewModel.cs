@@ -16,20 +16,23 @@ namespace ChessApp.WPF.ViewModel
     public class SquareViewModel : BaseViewModel
     {
         public Position Position { get; private set; }
-        public Brush BackgroundColor { get; set; }
+
+        private Brush _backGroundColor;
+        public Brush BackgroundColor 
+        {
+            get { return _backGroundColor; }
+            set
+            {
+                _backGroundColor = value;
+                OnPropertyChanged(nameof(Position));
+            }
+        }
         public ICommand ClickCommand { get; set; }
 
         public SquareViewModel(Position position)
         {
             Position = position;
-            int soma = position.Row + position.Column;
-
-            var converter = new BrushConverter();
-
-            if (soma % 2 == 0)
-                BackgroundColor = (Brush)converter.ConvertFromString("#dae4ee");
-            else
-                BackgroundColor = (Brush)converter.ConvertFromString("#8ca2ad");
+            ResetColor();
         }
 
         private string _pieceImage;
@@ -112,7 +115,7 @@ namespace ChessApp.WPF.ViewModel
             if (soma % 2 == 0)
                 BackgroundColor = (Brush)converter.ConvertFromString("#dae4ee");
             else
-                BackgroundColor = (Brush)converter.ConvertFromString("8ca2ad");
+                BackgroundColor = (Brush)converter.ConvertFromString("#8ca2ad");
         }
     }
 }
