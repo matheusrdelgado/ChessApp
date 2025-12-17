@@ -104,7 +104,9 @@ namespace ChessApp.WPF.ViewModel
         }
         public void Highlight()
         {
-            BackgroundColor = Brushes.Green;
+            var converter = new BrushConverter();
+
+            BackgroundColor = (Brush)converter.ConvertFromString("#4076FF03");
         }
 
         public void ResetColor()
@@ -116,6 +118,12 @@ namespace ChessApp.WPF.ViewModel
                 BackgroundColor = (Brush)converter.ConvertFromString("#dae4ee");
             else
                 BackgroundColor = (Brush)converter.ConvertFromString("#8ca2ad");
+        }
+
+        public void HighlightPossibleMove()
+        {
+            var converter = new BrushConverter();
+            BackgroundColor = (Brush)converter.ConvertFromString("#f7f769");
         }
     }
 }

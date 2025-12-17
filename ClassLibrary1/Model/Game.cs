@@ -172,6 +172,7 @@ namespace ChessApp.Model.Model
         private void SwitchTurn()
         {
             CurrentTurn = CurrentTurn == Color.White ? Color.Black : Color.White;
+            CheckForGameOver();
         }
 
         private void CheckForGameOver()

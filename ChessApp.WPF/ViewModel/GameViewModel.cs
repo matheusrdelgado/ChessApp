@@ -1,10 +1,11 @@
-﻿using System;
+﻿using ChessApp.Model.Enums;
+using ChessApp.Model.Model;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel; //para ObservableCollection que avisa o WPF se adicionar ou remover quadrados
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Collections.ObjectModel; //para ObservableCollection que avisa o WPF se adicionar ou remover quadrados
-using ChessApp.Model.Model;
 using System.Windows;
 
 namespace ChessApp.WPF.ViewModel
@@ -43,23 +44,29 @@ namespace ChessApp.WPF.ViewModel
 
         private void OnSquareClicked(SquareViewModel clickedSquare)
         {
-            if(_selectedSquare == null)
+            var piece = Game.Board.GetPiece(clickedSquare.Position);
+            if (_selectedSquare == null)
             {
-                var piece = Game.Board.GetPiece(clickedSquare.Position);
-                if(piece != null)
+                ResetAllSquares();
+                if (piece != null && piece.Color == Game.CurrentTurn)
                 {
-                    if(piece.Color == Game.CurrentTurn)
+                    _selectedSquare = clickedSquare;
+                    _selectedSquare.Highlight();
+
+                    foreach (var pos in piece.GetValidMoves(Game.Board))
                     {
-                        _selectedSquare = clickedSquare;
-                        _selectedSquare.Highlight();
+                        var square = BoardSquares.FirstOrDefault(s => s.Position.Row == pos.Row && s.Position.Column == pos.Column);
+                        square?.HighlightPossibleMove();
                     }
+                    return;
                 }
             }
             else
             {
-                if(_selectedSquare == clickedSquare)
+
+                if (_selectedSquare == clickedSquare)
                 {
-                    _selectedSquare.ResetColor();
+                    ResetAllSquares();
                     _selectedSquare = null;
                     return;
                 }
@@ -67,17 +74,37 @@ namespace ChessApp.WPF.ViewModel
                 try
                 {
                     Game.MakeMove(_selectedSquare.Position, clickedSquare.Position);
+
+                    ResetAllSquares();
                     RefreshBoard();
+
+                    _selectedSquare = null;
+
+                    if (Game.State == GameState.Checkmate)
+                    {
+                        MessageBox.Show($"Check-Mate! {Game.CurrentTurn} lost.", "Game Over");
+                    }
+                    else if (Game.State == GameState.Stalemate)
+                    {
+                        MessageBox.Show("Stalemate!", "Game Over");
+                    }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message, "Jogada Inválida");
+                    MessageBox.Show(ex.Message, "Invalid Move");
                 }
                 finally
                 {
-                    _selectedSquare.ResetColor();
                     _selectedSquare = null;
                 }
+            }
+            
+        }
+        private void ResetAllSquares()
+        {
+            foreach (var square in BoardSquares)
+            {
+                square.ResetColor();
             }
         }
 
