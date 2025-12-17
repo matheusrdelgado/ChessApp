@@ -9,12 +9,41 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\bB.png" />
+    <None Remove="Assets\bK.png" />
+    <None Remove="Assets\bN.png" />
+    <None Remove="Assets\bP.png" />
+    <None Remove="Assets\bQ.png" />
+    <None Remove="Assets\bR.png" />
+    <None Remove="Assets\wB.png" />
+    <None Remove="Assets\wK.png" />
+    <None Remove="Assets\wN.png" />
+    <None Remove="Assets\wP.png" />
+    <None Remove="Assets\wQ.png" />
+    <None Remove="Assets\wR.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\ClassLibrary1\ChessApp.Model.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Assets\" />
     <Folder Include="Views\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\bB.png" />
+    <Resource Include="Assets\bK.png" />
+    <Resource Include="Assets\bN.png" />
+    <Resource Include="Assets\bP.png" />
+    <Resource Include="Assets\bQ.png" />
+    <Resource Include="Assets\bR.png" />
+    <Resource Include="Assets\wB.png" />
+    <Resource Include="Assets\wK.png" />
+    <Resource Include="Assets\wN.png" />
+    <Resource Include="Assets\wP.png" />
+    <Resource Include="Assets\wQ.png" />
+    <Resource Include="Assets\wR.png" />
   </ItemGroup>
 
 </Project>
