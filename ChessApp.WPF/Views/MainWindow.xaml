@@ -12,45 +12,85 @@
     </Window.DataContext>
 
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="300" />
-        </Grid.ColumnDefinitions>
 
-        <Viewbox Grid.Column="0" Margin="20">
+        <Grid Visibility="{Binding MenuVisibility}" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <StackPanel Width="300">
+                <TextBlock Text="CoreChess" FontSize="48" FontWeight="Bold" Foreground="White" 
+                           HorizontalAlignment="Center" Margin="0,0,0,40"/>
 
-            <ItemsControl ItemsSource="{Binding BoardSquares}">
+                <Button Content="Log in / Register" Command="{Binding OpenLoginCommand}"
+                        Visibility="{Binding LoginButtonVisibility}"
+                        Height="40" Margin="0,0,0,20" Background="#007ACC" Foreground="White" 
+                        FontSize="14" BorderThickness="0"/>
 
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <UniformGrid Rows="8" Columns="8" Width="400" Height="400"/>
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
+                <StackPanel Visibility="{Binding UserAreaVisibility}" Margin="0,0,0,20">
+                    <TextBlock Text="{Binding CurrentUser.Username, StringFormat='Olá, {0}'}" 
+                               Foreground="#81b64c" HorizontalAlignment="Center" FontSize="18" Margin="0,0,0,5"/>
 
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Grid Background="{Binding BackgroundColor}">
+                    <Button Content="Open Match History" Command="{Binding OpenHistoryCommand}"
+                            Height="30" Background="Transparent" Foreground="#AAAAAA" BorderThickness="0" Cursor="Hand">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <TextBlock Text="{TemplateBinding Content}" TextDecorations="Underline" 
+                                           HorizontalAlignment="Center" Foreground="{TemplateBinding Foreground}"/>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                </StackPanel>
 
-                            <Grid.InputBindings>
-                                <MouseBinding Gesture="LeftClick" Command="{Binding ClickCommand}"/>
-                            </Grid.InputBindings>
+                <Button Content="New Game" Command="{Binding NewGameCommand}"
+                        Height="50" Margin="0,10" Background="#81b64c" Foreground="White" 
+                        FontSize="18" FontWeight="Bold" BorderThickness="0"/>
 
-                            <Image Source="{Binding PieceImage}" 
-                                   RenderOptions.BitmapScalingMode="HighQuality"
-                                   Margin="0"/>
-                        </Grid>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
+                <Button Content="Log out" Command="{Binding LogoutCommand}"
+                        Visibility="{Binding UserAreaVisibility}"
+                        Height="30" Margin="0,10,0,0" Background="Transparent" Foreground="#FF6666" 
+                        FontSize="14" BorderThickness="0"/>
 
-            </ItemsControl>
-        </Viewbox>
+                <Button Content="Close App" Click="BtnExit_Click"
+                        Height="30" Margin="0,5" Background="Transparent" Foreground="Gray" BorderThickness="0"/>
+            </StackPanel>
+        </Grid>
 
-        <StackPanel Grid.Column="1" Margin="20">
-            <TextBlock Text="CoreChess" FontSize="32" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+        <Grid Visibility="{Binding GameVisibility}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="250" />
+            </Grid.ColumnDefinitions>
 
-            <Button Content="New Game" Height="40" Margin="0,10" Background="#81b64c" Foreground="White" FontSize="16" FontWeight="Bold"/>
-            <Button Content="Play vs Computer" Height="40" Margin="0,10" Background="#454545" Foreground="White" FontSize="16"/>
-            <Button Content="Load Game" Height="40" Margin="0,10" Background="#454545" Foreground="White" FontSize="16"/>
-        </StackPanel>
+            <Viewbox Grid.Column="0" Margin="20">
+                <ItemsControl ItemsSource="{Binding BoardSquares}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Rows="8" Columns="8"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Button Command="{Binding ClickCommand}"
+                                    BorderThickness="0"
+                                    Background="{Binding Background}"
+                                    Width="60" Height="60">
+                                <Image Source="{Binding PieceImage}" Margin="5"/>
+                            </Button>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Viewbox>
+
+            <StackPanel Grid.Column="1" Margin="20" VerticalAlignment="Center">
+                <TextBlock Text="In Game" FontSize="24" FontWeight="Bold" Foreground="White" 
+                           HorizontalAlignment="Center" Margin="0,0,0,30"/>
+
+                <TextBlock Text="{Binding CurrentUser.Username, StringFormat='Jogador: {0}'}" 
+                           Foreground="#81b64c" HorizontalAlignment="Center" Margin="0,0,0,20"/>
+
+                <Button Content="Resign" Command="{Binding GiveUpCommand}"
+                        Height="50" Margin="0,10" Background="#aa3333" Foreground="White" 
+                        FontSize="14" FontWeight="Bold" BorderThickness="0"/>
+            </StackPanel>
+
+        </Grid>
+
     </Grid>
 </Window>

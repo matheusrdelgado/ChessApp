@@ -28,10 +28,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Views\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Resource Include="Assets\bB.png" />
     <Resource Include="Assets\bK.png" />
     <Resource Include="Assets\bN.png" />
