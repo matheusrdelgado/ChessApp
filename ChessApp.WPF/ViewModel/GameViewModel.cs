@@ -78,6 +78,7 @@ namespace ChessApp.WPF.ViewModel
         public ICommand OpenHistoryCommand { get; set; }
         public ICommand GiveUpCommand { get; set; }
         public ICommand ResignCommand { get; set; }
+        public ICommand CloseCommand { get; set; }
 
         public GameViewModel()
         {
@@ -114,6 +115,7 @@ namespace ChessApp.WPF.ViewModel
             });
 
             ResignCommand = new RelayCommand(p => Resign());
+            CloseCommand = new RelayCommand(p => Application.Current.Shutdown());
         }
 
         private void PerformLogin(object parameter)
@@ -207,19 +209,14 @@ namespace ChessApp.WPF.ViewModel
 
         private void InitializeBoardVisuals()
         {
-            var lightColor = (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFrom("#dae9f4");
-            var darkColor = (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFrom("#94b2c6");
-
             for (int row = 0; row < 8; row++)
             {
                 for (int col = 0; col < 8; col++)
                 {
                     var square = new SquareViewModel(new Position(row, col));
 
-                    bool isLight = (row + col) % 2 == 0;
-                    square.BackgroundColor = isLight ? lightColor : darkColor;
-
                     square.ClickCommand = new RelayCommand(param => OnSquareClicked(square));
+
                     BoardSquares.Add(square);
                 }
             }
