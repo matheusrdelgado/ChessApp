@@ -170,6 +170,7 @@ namespace ChessApp.WPF.ViewModel
         private void StartNewGame()
         {
             Game = new Game();
+            if (BoardSquares.Count == 0) InitializeBoardVisuals();
             ResetAllSquares();
             RefreshBoard();
             IsGameRunning = true;

@@ -1,43 +1,19 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Windows;
+﻿using System.Windows;
+using ChessApp.Model.Model;
+using ChessApp.WPF.ViewModel;
 
-namespace ChessApp.WPF
+namespace ChessApp.WPF.Views
 {
     public partial class HistoryWindow : Window
     {
         public HistoryWindow(string username)
         {
             InitializeComponent();
-            LoadHistory(username);
-        }
+            var vm = new HistoryViewModel(username);
 
-        private void LoadHistory(string username)
-        {
-            string folder = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Saves");
+            vm.OnRequestClose += () => Close();
 
-            if (Directory.Exists(folder))
-            {
-                var files = Directory.GetFiles(folder, $"{username}_*.json")
-                                     .Select(f => System.IO.Path.GetFileName(f))
-                                     .ToList();
-
-                ListHistory.ItemsSource = files;
-
-                if (files.Count == 0)
-                    ListHistory.Items.Add("Match not found.");
-            }
-            else
-            {
-                Directory.CreateDirectory(folder);
-                ListHistory.Items.Add("Match not found.");
-            }
-        }
-
-        private void BtnClose_Click(object sender, RoutedEventArgs e)
-        {
-            Close();
+            DataContext = vm;
         }
     }
 }

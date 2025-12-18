@@ -1,21 +1,22 @@
 ﻿using ChessApp.Model.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
-using System.Windows.Media;
 using ChessApp.Model.Enums;
-using Color = ChessApp.Model.Enums.Color;
+using System.Windows.Media; // Necessário para Brushes e ColorConverter
 using System.Windows.Input;
+using System.Windows.Controls;
+// Alias para não confundir com System.Windows.Media.Color no resto do código
+using Color = ChessApp.Model.Enums.Color;
+using PieceType = ChessApp.Model.Enums.PieceType; // Facilitar o switch
 
 namespace ChessApp.WPF.ViewModel
 {
     public class SquareViewModel : BaseViewModel
     {
         public Position Position { get; private set; }
+
+        private static readonly SolidColorBrush LightColor = new SolidColorBrush((System.Windows.Media.Color)ColorConverter.ConvertFromString("#EBF3F5"));
+        private static readonly SolidColorBrush DarkColor = new SolidColorBrush((System.Windows.Media.Color)ColorConverter.ConvertFromString("#8CA2AD"));
+        private static readonly SolidColorBrush HighlightColor = new SolidColorBrush((System.Windows.Media.Color)ColorConverter.ConvertFromString("#F6F696"));
+        private static readonly SolidColorBrush PossibleMoveColor = new SolidColorBrush((System.Windows.Media.Color)ColorConverter.ConvertFromString("#A9D08E"));
 
         private Brush _backGroundColor;
         public Brush BackgroundColor 
@@ -104,26 +105,24 @@ namespace ChessApp.WPF.ViewModel
         }
         public void Highlight()
         {
-            var converter = new BrushConverter();
-
-            BackgroundColor = (Brush)converter.ConvertFromString("#4076FF03");
+            BackgroundColor = HighlightColor;
         }
 
         public void ResetColor()
         {
-            var converter = new BrushConverter();
-            int soma = Position.Row + Position.Column;
-
-            if (soma % 2 == 0)
-                BackgroundColor = (Brush)converter.ConvertFromString("#dae4ee");
+            if ((Position.Row + Position.Column) % 2 == 0)
+            {
+                BackgroundColor = LightColor;
+            }
             else
-                BackgroundColor = (Brush)converter.ConvertFromString("#8ca2ad");
+            {
+                BackgroundColor = DarkColor;
+            }
         }
 
         public void HighlightPossibleMove()
         {
-            var converter = new BrushConverter();
-            BackgroundColor = (Brush)converter.ConvertFromString("#f7f769");
+            BackgroundColor = PossibleMoveColor;
         }
     }
 }
