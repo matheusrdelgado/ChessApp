@@ -206,14 +206,19 @@ namespace ChessApp.WPF.ViewModel
 
         private void InitializeBoardVisuals()
         {
-            for(int row = 0; row < 8; row++)
+            var lightColor = (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFrom("#dae9f4");
+            var darkColor = (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFrom("#94b2c6");
+
+            for (int row = 0; row < 8; row++)
             {
-                for(int col = 0; col < 8; col++)
+                for (int col = 0; col < 8; col++)
                 {
                     var square = new SquareViewModel(new Position(row, col));
 
-                    square.ClickCommand = new RelayCommand(param => OnSquareClicked(square));
+                    bool isLight = (row + col) % 2 == 0;
+                    square.BackgroundColor = isLight ? lightColor : darkColor;
 
+                    square.ClickCommand = new RelayCommand(param => OnSquareClicked(square));
                     BoardSquares.Add(square);
                 }
             }

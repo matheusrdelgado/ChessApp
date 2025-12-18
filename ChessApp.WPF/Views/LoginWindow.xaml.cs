@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using ChessApp.Model.Services;
 using ChessApp.Model.Model;
+using ChessApp.WPF.ViewModel;
 
 namespace ChessApp.WPF.Views
 {
@@ -30,6 +31,14 @@ namespace ChessApp.WPF.Views
 
         private void BtnLogin_Click(object sender, RoutedEventArgs e)
         {
+            _userService = new UserService();
+
+            if (string.IsNullOrWhiteSpace(txtUser.Text) || string.IsNullOrWhiteSpace(txtPass.Password))
+            {
+                MessageBox.Show("Missing data.");
+                return;
+            }
+
             if (string.IsNullOrWhiteSpace(txtUser.Text) || string.IsNullOrWhiteSpace(txtPass.Password))
             {
                 MessageBox.Show("Missing username or password.");
@@ -52,7 +61,8 @@ namespace ChessApp.WPF.Views
         private void BtnOpenRegister_Click(object sender, RoutedEventArgs e)
         {
             var registerWin = new RegisterWindow();
-            registerWin.ShowDialog();
+            registerWin.ShowDialog(); 
+
         }
     }
 }

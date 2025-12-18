@@ -85,9 +85,9 @@
                 <TextBlock Text="{Binding CurrentUser.Username, StringFormat='Jogador: {0}'}" 
                            Foreground="#81b64c" HorizontalAlignment="Center" Margin="0,0,0,20"/>
 
-                <Button Content="Resign" Command="{Binding GiveUpCommand}"
-                        Height="50" Margin="0,10" Background="#aa3333" Foreground="White" 
-                        FontSize="14" FontWeight="Bold" BorderThickness="0"/>
+                <Button Content="Resign" Command="{Binding ResignCommand}"
+                    Height="50" Margin="0,10" Background="#aa3333" Foreground="White" 
+                    FontSize="14" FontWeight="Bold" BorderThickness="0"/>
             </StackPanel>
 
         </Grid>
