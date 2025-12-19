@@ -1,13 +1,11 @@
 # CoreChess
 
-![Build Status](https://github.com/SEU_USERNAME/SEU_REPO/actions/workflows/dotnet-desktop.yml/badge.svg)
 ![.NET](https://img.shields.io/badge/.NET-8.0-purple)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 
 **CoreChess** é uma aplicação de Xadrez robusta e modular desenvolvida em C# e WPF. Este projeto foca-se na implementação de *Design Patterns*, arquitetura limpa (MVVM) e integração com motores de xadrez profissionais (Stockfish) para uma experiência PvE desafiante.
 
-![Screenshot do Jogo](Assets/screenshot.png)
-*(Nota: Podes adicionar um print do jogo aqui depois)*
+
 
 ## 🚀 Funcionalidades Principais
 
