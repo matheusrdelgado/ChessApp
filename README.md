@@ -47,7 +47,7 @@ O projeto foi construído seguindo as melhores práticas de Engenharia de Softwa
 ### Passo a Passo
 1.  **Clonar o repositório:**
     ```bash
-    git clone [https://github.com/SEU_USERNAME/CoreChess.git](https://github.com/SEU_USERNAME/CoreChess.git)
+    git clone https://github.com/matheusrdelgado/ChessApp.git
     ```
 2.  **Configurar o Stockfish:**
     * O jogo requer o executável do Stockfish na pasta `Engine`.
