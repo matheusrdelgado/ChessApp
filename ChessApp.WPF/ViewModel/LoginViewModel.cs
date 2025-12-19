@@ -62,6 +62,7 @@ namespace ChessApp.WPF.ViewModel
         {
             var registerWin = new Views.RegisterWindow();
             registerWin.ShowDialog();
+            _userService.LoadUsers();
         }
     }
 }

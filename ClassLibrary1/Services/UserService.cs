@@ -22,7 +22,7 @@ namespace ChessApp.Model.Services
             LoadUsers();
         }
 
-        private void LoadUsers()
+        public void LoadUsers()
         {
             Users = new List<User>();
 

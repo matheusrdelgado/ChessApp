@@ -12,5 +12,6 @@ namespace ChessApp.Model.Interfaces
         bool Register(string username, string password);
         User Login(string username, string password);
         void SaveUsers();
+        void LoadUsers();
     }
 }
