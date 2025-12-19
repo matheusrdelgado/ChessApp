@@ -1,7 +1,9 @@
-﻿using System;
+﻿using ChessApp.Model.Services;
+using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows.Input;
 
 namespace ChessApp.WPF.ViewModel
@@ -15,6 +17,25 @@ namespace ChessApp.WPF.ViewModel
         {
             get { return _statusMessage; }
             set { _statusMessage = value; OnPropertyChanged(); }
+        }
+
+        private string _selectedFile;
+        public string SelectedFile
+        {
+            get { return _selectedFile; }
+            set
+            {
+                _selectedFile = value;
+                OnPropertyChanged();
+                LoadMatchDetails(_selectedFile);
+            }
+        }
+
+        private string _matchDetails;
+        public string MatchDetails
+        {
+            get { return _matchDetails; }
+            set { _matchDetails = value; OnPropertyChanged(); }
         }
 
         public event Action OnRequestClose;
@@ -55,6 +76,39 @@ namespace ChessApp.WPF.ViewModel
             else
             {
                 StatusMessage = "Match not found (Non existent directory).";
+            }
+        }
+
+        private void LoadMatchDetails(string fileName)
+        {
+            if (string.IsNullOrEmpty(fileName)) return;
+
+            try
+            {
+                var fileService = new GameFileService();
+                var gameLoaded = fileService.LoadGame(fileName);
+
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine($"File: {fileName}");
+                sb.AppendLine($"Total moves: {gameLoaded.MoveHistory.Count}");
+                sb.AppendLine("-----------------------------");
+                sb.AppendLine("Game Report:");
+
+                int turnCount = 1;
+                foreach (var move in gameLoaded.MoveHistory)
+                {
+
+                    if (move.PieceMoved != null && move.To != null)
+                    {
+                        sb.AppendLine($"{turnCount}. {move.PieceMoved.Color} {move.PieceMoved.PieceType} -> {move.Notation}");
+
+                    }
+                    turnCount++;
+                }
+            }
+            catch (Exception ex)
+            {
+                MatchDetails = "Error reading file: " + ex.Message;
             }
         }
 

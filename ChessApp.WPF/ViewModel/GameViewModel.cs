@@ -105,6 +105,7 @@ namespace ChessApp.WPF.ViewModel
             NewGameCommand = new RelayCommand(param => // => lambda function
             {
                 IsPvE = false;
+                PlayerColor = Color.White;
                 StartNewGame();
             });
             NewGamePvECommand = new RelayCommand(param =>
