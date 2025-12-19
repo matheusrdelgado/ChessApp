@@ -27,6 +27,7 @@ namespace ChessApp.WPF.ViewModel
         public ObservableCollection<SquareViewModel> BoardSquares { get; set; }
 
         private SquareViewModel _selectedSquare;
+        public Color PlayerColor { get; set; } = Color.White;
 
         public bool IsPvE { get; private set; }
 
@@ -85,6 +86,7 @@ namespace ChessApp.WPF.ViewModel
         public ICommand ResignCommand { get; set; }
         public ICommand CloseCommand { get; set; }
         public ICommand NewGamePvECommand { get; set; }
+        public ICommand NewGamePvEBlackCommand { get; set; }
 
         public GameViewModel()
         {
@@ -108,6 +110,13 @@ namespace ChessApp.WPF.ViewModel
             NewGamePvECommand = new RelayCommand(param =>
             {
                 IsPvE = true;
+                PlayerColor = Color.White;
+                StartNewGame();
+            });
+            NewGamePvEBlackCommand = new RelayCommand(param =>
+            {
+                IsPvE = true;
+                PlayerColor = Color.Black;
                 StartNewGame();
             });
             SaveGameCommand = new RelayCommand(param => SaveCurrentGame(), param => IsGameRunning);
@@ -206,13 +215,18 @@ namespace ChessApp.WPF.ViewModel
         private void StartNewGame()
         {
             Game = new Game();
-            if (BoardSquares.Count == 0) InitializeBoardVisuals();
-            ResetAllSquares();
+            BoardSquares.Clear();
+            InitializeBoardVisuals();
             RefreshBoard();
             IsGameRunning = true;
 
             MenuVisibility = Visibility.Collapsed;
             GameVisibility = Visibility.Visible;
+
+            if (IsPvE && PlayerColor == Color.Black)
+            {
+                PlayBotTurn();
+            }
         }
 
         private void SaveCurrentGame()
@@ -227,17 +241,33 @@ namespace ChessApp.WPF.ViewModel
 
         private void InitializeBoardVisuals()
         {
-            for (int row = 0; row < 8; row++)
+            if (PlayerColor == Color.White)
             {
-                for (int col = 0; col < 8; col++)
+                for (int row = 0; row < 8; row++)
                 {
-                    var square = new SquareViewModel(new Position(row, col));
-
-                    square.ClickCommand = new RelayCommand(param => OnSquareClicked(square));
-
-                    BoardSquares.Add(square);
+                    for (int col = 0; col < 8; col++)
+                    {
+                        CreateSquare(row, col);
+                    }
                 }
             }
+            else
+            {
+                for (int row = 7; row >= 0; row--)
+                {
+                    for (int col = 7; col >= 0; col--)
+                    {
+                        CreateSquare(row, col);
+                    }
+                }
+            }
+        }
+
+        private void CreateSquare(int row, int col)
+        {
+            var square = new SquareViewModel(new Position(row, col));
+            square.ClickCommand = new RelayCommand(param => OnSquareClicked(square));
+            BoardSquares.Add(square);
         }
 
         private void OnSquareClicked(SquareViewModel clickedSquare)
@@ -285,7 +315,7 @@ namespace ChessApp.WPF.ViewModel
 
                     CheckGameOver();
 
-                    if (IsGameRunning && IsPvE && Game.CurrentTurn == Color.Black) //stockfish
+                    if (IsGameRunning && IsPvE && Game.CurrentTurn != PlayerColor) //stockfish
                     {
                         PlayBotTurn();
                     }

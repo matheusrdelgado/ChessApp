@@ -13,53 +13,80 @@
 
     <Grid>
 
-        <Grid Visibility="{Binding MenuVisibility}" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <StackPanel Width="300">
-                <TextBlock Text="CoreChess" FontSize="48" FontWeight="Bold" Foreground="White" 
-                           HorizontalAlignment="Center" Margin="0,0,0,40"/>
+        <Grid Visibility="{Binding MenuVisibility}">
 
-                <Button Content="Log in / Register" Command="{Binding OpenLoginCommand}"
+        <StackPanel VerticalAlignment="Top" HorizontalAlignment="Right" Margin="20" Orientation="Horizontal">
+
+            <Button Content="Log in / Register" Command="{Binding OpenLoginCommand}"
                         Visibility="{Binding LoginButtonVisibility}"
-                        Height="40" Margin="0,0,0,20" Background="#007ACC" Foreground="White" 
-                        FontSize="14" BorderThickness="0"/>
+                        Background="Transparent" Foreground="#AAAAAA" BorderThickness="1" BorderBrush="#AAAAAA"
+                        Padding="15,5" Cursor="Hand" FontSize="14">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="{TemplateBinding Background}" 
+                                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                                BorderThickness="{TemplateBinding BorderThickness}" 
+                                                CornerRadius="5">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Foreground" Value="White"/>
+                                <Setter Property="BorderBrush" Value="White"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
 
-                <StackPanel Visibility="{Binding UserAreaVisibility}" Margin="0,0,0,20">
-                    <TextBlock Text="{Binding CurrentUser.Username, StringFormat='Olá, {0}'}" 
-                               Foreground="#81b64c" HorizontalAlignment="Center" FontSize="18" Margin="0,0,0,5"/>
-
-                    <Button Content="Open Match History" Command="{Binding OpenHistoryCommand}"
-                            Height="30" Background="Transparent" Foreground="#AAAAAA" BorderThickness="0" Cursor="Hand">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <TextBlock Text="{TemplateBinding Content}" TextDecorations="Underline" 
-                                           HorizontalAlignment="Center" Foreground="{TemplateBinding Foreground}"/>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
-                </StackPanel>
-
-                <Button Content="New Game" Command="{Binding NewGameCommand}"
-                        Height="50" Margin="0,10" Background="#81b64c" Foreground="White" 
-                        FontSize="18" FontWeight="Bold" BorderThickness="0"/>
-                
-                <Button Content="Play vs Computer" Command="{Binding NewGamePvECommand}"
-                        Height="50" Margin="0,5,0,15" Background="#4b758f" Foreground="White" 
-                        FontSize="18" FontWeight="Bold" BorderThickness="0"/>
+            <StackPanel Orientation="Horizontal" Visibility="{Binding UserAreaVisibility}">
+                <TextBlock Text="{Binding CurrentUser.Username, StringFormat='Olá, {0}'}" 
+                               Foreground="White" VerticalAlignment="Center" Margin="0,0,15,0" FontSize="16"/>
 
                 <Button Content="Log out" Command="{Binding LogoutCommand}"
-                        Visibility="{Binding UserAreaVisibility}"
-                        Height="30" Margin="0,10,0,0" Background="Transparent" Foreground="#FF6666" 
-                        FontSize="14" BorderThickness="0"/>
-                
-
-                <Button Content="Close App" 
-                    Command="{Binding CloseCommand}"
-                    Height="30" Margin="0,5" Background="Transparent" Foreground="Gray" BorderThickness="0">
-                </Button>
+                            Background="Transparent" Foreground="#FF6666" BorderThickness="0"
+                            VerticalAlignment="Center" Cursor="Hand" FontSize="14" FontWeight="Bold"/>
             </StackPanel>
-        </Grid>
+        </StackPanel>
 
-        <Grid Visibility="{Binding GameVisibility}">
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="300">
+            <TextBlock Text="CoreChess" FontSize="60" FontWeight="Bold" Foreground="White" 
+                           HorizontalAlignment="Center" Margin="0,0,0,40">
+                <TextBlock.Effect>
+                    <DropShadowEffect Color="Black" BlurRadius="10" ShadowDepth="5" Opacity="0.5"/>
+                </TextBlock.Effect>
+            </TextBlock>
+
+            <Button Content="New Game (PvP)" Command="{Binding NewGameCommand}"
+                        Height="50" Margin="0,5" Background="#81b64c" Foreground="White" 
+                        FontSize="18" FontWeight="Bold" BorderThickness="0" Cursor="Hand"/>
+
+            <Button Content="Play vs Computer as White" Command="{Binding NewGamePvECommand}"
+                        Height="50" Margin="0,5" Background="#4F7942" Foreground="White" 
+                        FontSize="18" FontWeight="SemiBold" BorderThickness="0" Cursor="Hand"/>
+
+            <Button Content="Play vs Computer as Black" Command="{Binding NewGamePvEBlackCommand}"
+                        Height="50" Margin="0,5" Background="#333333" Foreground="White" 
+                        FontSize="18" FontWeight="SemiBold" BorderThickness="0" Cursor="Hand"/>
+
+            <Button Content="Match History" Command="{Binding OpenHistoryCommand}"
+                        Visibility="{Binding UserAreaVisibility}"
+                        Height="40" Margin="0,20,0,5" Background="#007ACC" Foreground="White" 
+                        FontSize="14" BorderThickness="0" Cursor="Hand"/>
+
+            <Button Content="Exit Game" Command="{Binding CloseCommand}"
+                        Height="30" Margin="0,10" Background="Transparent" Foreground="#777777" 
+                        FontSize="14" BorderThickness="0" Cursor="Hand"/>
+        </StackPanel>
+    </Grid>
+
+    <Grid Visibility="{Binding GameVisibility}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="250" />

@@ -6,11 +6,14 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <ApplicationIcon>Assets\bN.ico</ApplicationIcon>
+    <AssemblyName>CoreChess</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="Assets\bB.png" />
     <None Remove="Assets\bK.png" />
+    <None Remove="Assets\bN.ico" />
     <None Remove="Assets\bN.png" />
     <None Remove="Assets\bP.png" />
     <None Remove="Assets\bQ.png" />
@@ -24,12 +27,17 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Assets\bN.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\ClassLibrary1\ChessApp.Model.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Resource Include="Assets\bB.png" />
     <Resource Include="Assets\bK.png" />
+    <Resource Include="Assets\bN.ico" />
     <Resource Include="Assets\bN.png" />
     <Resource Include="Assets\bP.png" />
     <Resource Include="Assets\bQ.png" />
