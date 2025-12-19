@@ -28,19 +28,29 @@ namespace ChessApp.Model.Model
             int rowDiff = Math.Abs(to.Row - CurrentPosition.Row);
             int columnDiff = Math.Abs(to.Column - CurrentPosition.Column);
 
-            if (rowDiff == 0 && columnDiff == 0 || rowDiff > 1 || columnDiff > 1)
+            if (rowDiff <= 1 && columnDiff <= 1)
             {
-                return false;
+                if (rowDiff == 0 && columnDiff == 0) return false;
+
+                Piece piece = board.GetPiece(to);
+                if (piece == null) return true;
+                if (piece.Color != Color) return true; // Captura
+
+                return false; // Peça amiga
+            }
+            if (rowDiff == 0 && columnDiff == 2)
+            {
+                if (to.Column > CurrentPosition.Column)
+                {
+                    return CanCastleShort(board);
+                }
+                else
+                {
+                    return CanCastleLong(board);
+                }
             }
 
-            Piece piece = board.GetPiece(to);
-
-            if (piece == null)
-                return true;
-
-            if (piece.Color == Color)
-                return false;
-            return true;
+            return false;
 
         }
 

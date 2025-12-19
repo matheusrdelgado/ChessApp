@@ -391,7 +391,7 @@ namespace ChessApp.WPF.ViewModel
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Erro ao guardar partida: " + ex.Message);
+                    MessageBox.Show("Error in saving match: " + ex.Message);
                 }
             }
         }
@@ -439,17 +439,6 @@ namespace ChessApp.WPF.ViewModel
             {
                 MessageBox.Show($"Engine exploded {ex.Message}");
             }
-        }
-
-        
-        private (Position from, Position to) ParseStockfishMove(string moveString) //method to translate e2e4
-        {
-            var fromCol = moveString[0] - 'a';
-            var fromRow = 8 - (moveString[1] - '0');
-            var toCol = moveString[2] - 'a';
-            var toRow = 8 - (moveString[3] - '0');
-
-            return (new Position(fromRow, fromCol), new Position(toRow, toCol));
         }
     }
 }
