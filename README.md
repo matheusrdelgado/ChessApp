@@ -18,7 +18,7 @@
     * Regras especiais: *Castling* (Roque), *En Passant* e Promoção de Peões.
     * Deteção de Xeque e Xeque-Mate.
 * **Sistema de Utilizadores:**
-    * Registo e Autenticação (Login) seguros.
+    * Registo e Autenticação (Login) (Work on progress...)
     * Persistência de dados em JSON.
     * Histórico de partidas por utilizador.
 * **Interface (UI/UX):**
