@@ -1,14 +1,16 @@
-﻿using ChessApp.Model.Model;
+﻿using ChessApp.Model.Interfaces;
+using ChessApp.Model.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using ChessApp.Model.Interfaces;
 
 namespace ChessApp.Model.Services
 {
-    public class UserService
+    public class UserService : IUserService
     {
         private readonly string UsersFilePath;
         public List<User> Users { get; private set; }

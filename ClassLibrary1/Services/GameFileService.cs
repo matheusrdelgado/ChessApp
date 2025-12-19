@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 using System.IO;
 using ChessApp.Model.Model;
 using System.Text.Json;
+using ChessApp.Model.Interfaces;
 
 namespace ChessApp.Model.Services
 {
-    public class GameFileService
+    public class GameFileService : IGameFileService
     {
         private readonly string GameDirectory;
 

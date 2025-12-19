@@ -1,4 +1,5 @@
 ﻿using ChessApp.Model.Enums;
+using ChessApp.Model.Interfaces;
 using ChessApp.Model.Model;
 using ChessApp.Model.Services;
 using ChessApp.WPF.Views;
@@ -9,16 +10,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Input;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace ChessApp.WPF.ViewModel
 {
     public class GameViewModel : BaseViewModel
     {
         //services
-        private readonly UserService _userService;
-        private readonly GameFileService _gameFileService;
+        private readonly IUserService _userService;
+        private readonly IGameFileService _gameFileService;
         private StockfishService _stockfishService;
 
         //game proprierties
@@ -48,6 +49,7 @@ namespace ChessApp.WPF.ViewModel
             set { _inputUsername = value; OnPropertyChanged(); }
         }
         private User _currentUser;
+
         public User CurrentUser
         {
             get { return _currentUser; }
@@ -97,8 +99,8 @@ namespace ChessApp.WPF.ViewModel
             RefreshBoard();
             IsGameRunning = false;
 
-            NewGameCommand = new RelayCommand(param => StartNewGame()); // => lambda function
-            NewGameCommand = new RelayCommand(param =>
+            
+            NewGameCommand = new RelayCommand(param => // => lambda function
             {
                 IsPvE = false;
                 StartNewGame();
@@ -166,7 +168,7 @@ namespace ChessApp.WPF.ViewModel
             if (user != null)
             {
                 CurrentUser = user;
-                MessageBox.Show($"Welcome back {user.Username}!");
+                MessageBox.Show($"Welcome {user.Username}!");
                 // clean passwordbox
                 passwordBox.Password = "";
             }
@@ -211,22 +213,6 @@ namespace ChessApp.WPF.ViewModel
 
             MenuVisibility = Visibility.Collapsed;
             GameVisibility = Visibility.Visible;
-        }
-
-        private void PerformLogin(string user, string pass)
-        {
-            var loggedUser = _userService.Login(user, pass);
-            if(loggedUser != null)
-            {
-                CurrentUser = loggedUser;
-                MessageBox.Show($"Welcome, {CurrentUser.Username}!");
-            }
-            else
-            {
-                _userService.Register(user, pass);
-                CurrentUser = _userService.Login(user, pass);
-                MessageBox.Show($"Account created {user}!");
-            }
         }
 
         private void SaveCurrentGame()
@@ -417,7 +403,7 @@ namespace ChessApp.WPF.ViewModel
                 return;
             }
 
-            await Task.Delay(500);
+            await Task.Delay(500); //500ms de delay
 
             try
             {
