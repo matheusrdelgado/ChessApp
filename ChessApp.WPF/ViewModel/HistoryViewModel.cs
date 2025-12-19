@@ -5,6 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Input;
+using System.Text.Json;
+using ChessApp.Model.Enums;
 
 namespace ChessApp.WPF.ViewModel
 {
@@ -85,26 +87,50 @@ namespace ChessApp.WPF.ViewModel
 
             try
             {
-                var fileService = new GameFileService();
-                var gameLoaded = fileService.LoadGame(fileName);
+                string folder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Saves");
+                string filePath = Path.Combine(folder, fileName);
+
+                if (!File.Exists(filePath)) return;
+
+                string jsonContent = File.ReadAllText(filePath);
 
                 StringBuilder sb = new StringBuilder();
                 sb.AppendLine($"File: {fileName}");
-                sb.AppendLine($"Total moves: {gameLoaded.MoveHistory.Count}");
                 sb.AppendLine("-----------------------------");
                 sb.AppendLine("Game Report:");
 
-                int turnCount = 1;
-                foreach (var move in gameLoaded.MoveHistory)
+                using (JsonDocument doc = JsonDocument.Parse(jsonContent))
                 {
+                    JsonElement root = doc.RootElement; 
 
-                    if (move.PieceMoved != null && move.To != null)
+                    if (root.ValueKind == JsonValueKind.Array)
                     {
-                        sb.AppendLine($"{turnCount}. {move.PieceMoved.Color} {move.PieceMoved.PieceType} -> {move.Notation}");
+                        sb.AppendLine($"Total moves: {root.GetArrayLength()}");
+                        sb.AppendLine("");
 
+                        int turnCount = 1;
+                        foreach (JsonElement move in root.EnumerateArray())
+                        {
+                            string notation = "?";
+                            if (move.TryGetProperty("Notation", out JsonElement notationEl))
+                                notation = notationEl.GetString();
+
+                            string pieceDesc = "Piece";
+                            if (move.TryGetProperty("PieceMoved", out JsonElement pieceEl))
+                            {
+                                int colorInt = pieceEl.GetProperty("Color").GetInt32();
+                                int typeInt = pieceEl.GetProperty("PieceType").GetInt32();
+
+                                pieceDesc = $"{(Color)colorInt} {(PieceType)typeInt}";
+                            }
+
+                            sb.AppendLine($"{turnCount}. {pieceDesc} -> {notation}");
+                            turnCount++;
+                        }
                     }
-                    turnCount++;
                 }
+
+                MatchDetails = sb.ToString();
             }
             catch (Exception ex)
             {
