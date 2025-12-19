@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ChessApp.Model.Enums;
+using ChessApp.Model.Factories;
 
 namespace ChessApp.Model.Model
 {
@@ -203,29 +204,29 @@ namespace ChessApp.Model.Model
             ClearBoard();
             for (int col = 0; col < 8; col++)
             {
-                PlacePiece(new Pawn(new Position(1, col), Color.Black)); //a posicao esta escrita duas vezes porque o PlacePiece pede a posicao como segundo parametro
+                PlacePiece(PieceFactory.CreatePiece(PieceType.Pawn, new Position(1, col), Color.Black));
             }
-            PlacePiece(new Rook(new Position(0, 0), Color.Black));
-            PlacePiece(new Knight(new Position(0, 1), Color.Black));
-            PlacePiece(new Bishop(new Position(0, 2), Color.Black));
-            PlacePiece(new Queen(new Position(0, 3), Color.Black));
-            PlacePiece(new King(new Position(0, 4), Color.Black));
-            PlacePiece(new Bishop(new Position(0, 5), Color.Black));
-            PlacePiece(new Knight(new Position(0, 6), Color.Black));
-            PlacePiece(new Rook(new Position(0, 7), Color.Black));
+            PlacePiece(PieceFactory.CreatePiece(PieceType.Rook, new Position(0, 0), Color.Black));
+            PlacePiece(PieceFactory.CreatePiece(PieceType.Knight, new Position(0, 1), Color.Black));
+            PlacePiece(PieceFactory.CreatePiece(PieceType.Bishop, new Position(0, 2), Color.Black));
+            PlacePiece(PieceFactory.CreatePiece(PieceType.Queen, new Position(0, 3), Color.Black));
+            PlacePiece(PieceFactory.CreatePiece(PieceType.King, new Position(0, 4), Color.Black));
+            PlacePiece(PieceFactory.CreatePiece(PieceType.Bishop, new Position(0, 5), Color.Black));
+            PlacePiece(PieceFactory.CreatePiece(PieceType.Knight, new Position(0, 6), Color.Black));
+            PlacePiece(PieceFactory.CreatePiece(PieceType.Rook, new Position(0, 7), Color.Black));
 
             for (int col = 0; col < 8; col++)
             {
-                PlacePiece(new Pawn(new Position(6, col), Color.White));
+                PlacePiece(PieceFactory.CreatePiece(PieceType.Pawn, new Position(6, col), Color.White));
             }
-            PlacePiece(new Rook(new Position(7, 0), Color.White));
-            PlacePiece(new Knight(new Position(7, 1), Color.White));
-            PlacePiece(new Bishop(new Position(7, 2), Color.White));
-            PlacePiece(new Queen(new Position(7, 3), Color.White));
-            PlacePiece(new King(new Position(7, 4), Color.White));
-            PlacePiece(new Bishop(new Position(7, 5), Color.White));
-            PlacePiece(new Knight(new Position(7, 6), Color.White));
-            PlacePiece(new Rook(new Position(7, 7), Color.White));
+            PlacePiece(PieceFactory.CreatePiece(PieceType.Rook, new Position(7, 0), Color.White));
+            PlacePiece(PieceFactory.CreatePiece(PieceType.Knight, new Position(7, 1), Color.White));
+            PlacePiece(PieceFactory.CreatePiece(PieceType.Bishop, new Position(7, 2), Color.White));
+            PlacePiece(PieceFactory.CreatePiece(PieceType.Queen, new Position(7, 3), Color.White));
+            PlacePiece(PieceFactory.CreatePiece(PieceType.King, new Position(7, 4), Color.White));
+            PlacePiece(PieceFactory.CreatePiece(PieceType.Bishop, new Position(7, 5), Color.White));
+            PlacePiece(PieceFactory.CreatePiece(PieceType.Knight, new Position(7, 6), Color.White));
+            PlacePiece(PieceFactory.CreatePiece(PieceType.Rook, new Position(7, 7), Color.White));
         }
 
         public string GetFen(Color CurrentTurn, Position enPassantSquare = null)
