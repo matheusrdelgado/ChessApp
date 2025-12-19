@@ -42,4 +42,14 @@
     <Resource Include="Assets\wR.png" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Engine\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Engine\stockfish.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

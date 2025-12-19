@@ -151,6 +151,13 @@ namespace ChessApp.Model.Model
             SwitchTurn();
         }
 
+        public string GetCurrentFen()
+        {
+            Position epTarget = GetEnPassantTarget();
+
+            return Board.GetFen(CurrentTurn, epTarget);
+        }
+
         public bool IsCheck(Color kingColor)
         {
             Position kingPos = Board.GetKingPosition(kingColor);

@@ -19,12 +19,15 @@ namespace ChessApp.WPF.ViewModel
         //services
         private readonly UserService _userService;
         private readonly GameFileService _gameFileService;
-        
+        private StockfishService _stockfishService;
+
         //game proprierties
         public Game Game { get; private set; }
         public ObservableCollection<SquareViewModel> BoardSquares { get; set; }
 
         private SquareViewModel _selectedSquare;
+
+        public bool IsPvE { get; private set; }
 
         //Game State
         private bool _isGameRunning;
@@ -79,6 +82,7 @@ namespace ChessApp.WPF.ViewModel
         public ICommand GiveUpCommand { get; set; }
         public ICommand ResignCommand { get; set; }
         public ICommand CloseCommand { get; set; }
+        public ICommand NewGamePvECommand { get; set; }
 
         public GameViewModel()
         {
@@ -94,6 +98,16 @@ namespace ChessApp.WPF.ViewModel
             IsGameRunning = false;
 
             NewGameCommand = new RelayCommand(param => StartNewGame()); // => lambda function
+            NewGameCommand = new RelayCommand(param =>
+            {
+                IsPvE = false;
+                StartNewGame();
+            });
+            NewGamePvECommand = new RelayCommand(param =>
+            {
+                IsPvE = true;
+                StartNewGame();
+            });
             SaveGameCommand = new RelayCommand(param => SaveCurrentGame(), param => IsGameRunning);
             LoginCommand = new RelayCommand(p => PerformLogin(p));
             RegisterCommand = new RelayCommand(p => PerformRegister(p));
@@ -116,6 +130,24 @@ namespace ChessApp.WPF.ViewModel
 
             ResignCommand = new RelayCommand(p => Resign());
             CloseCommand = new RelayCommand(p => Application.Current.Shutdown());
+
+            try
+            {
+                string path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Engine", "stockfish.exe");
+
+                if (System.IO.File.Exists(path))
+                {
+                    _stockfishService = new StockfishService(path);
+                }
+                else
+                {
+                    MessageBox.Show("Stockfish.exe wasn't found in Engine directory.");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Failed to load stockfish: " + ex.Message);
+            }
         }
 
         private void PerformLogin(object parameter)
@@ -266,6 +298,11 @@ namespace ChessApp.WPF.ViewModel
                     _selectedSquare = null;
 
                     CheckGameOver();
+
+                    if (IsGameRunning && IsPvE && Game.CurrentTurn == Color.Black) //stockfish
+                    {
+                        PlayBotTurn();
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -357,6 +394,62 @@ namespace ChessApp.WPF.ViewModel
                     MessageBox.Show("Erro ao guardar partida: " + ex.Message);
                 }
             }
+        }
+
+        private (Position from, Position to) ParseStockfishMove(string moveString)
+        {
+            // moveString ex: "e2e4" ou "e7e8q" (promotion)
+
+            var fromCol = moveString[0] - 'a';       // 'e' - 'a' = 4
+            var fromRow = 8 - (moveString[1] - '0'); // 8 - 2 = 6 
+
+            var toCol = moveString[2] - 'a';
+            var toRow = 8 - (moveString[3] - '0');
+
+            return (new Position(fromRow, fromCol), new Position(toRow, toCol));
+        }
+
+        private async void PlayBotTurn()
+        {
+            if (_stockfishService == null)
+            {
+                MessageBox.Show("Error: Stockfish was not initialized properly");
+                return;
+            }
+
+            await Task.Delay(500);
+
+            try
+            {
+                string fen = Game.GetCurrentFen();
+                string bestMoveString = await _stockfishService.GetBestMoveAsync(fen);
+
+                if (!string.IsNullOrEmpty(bestMoveString))
+                {
+                    var (from, to) = ParseStockfishMove(bestMoveString);
+
+                    Game.MakeMove(from, to);
+
+                    ResetAllSquares();
+                    RefreshBoard();
+                    CheckGameOver();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Engine exploded {ex.Message}");
+            }
+        }
+
+        
+        private (Position from, Position to) ParseStockfishMove(string moveString) //method to translate e2e4
+        {
+            var fromCol = moveString[0] - 'a';
+            var fromRow = 8 - (moveString[1] - '0');
+            var toCol = moveString[2] - 'a';
+            var toRow = 8 - (moveString[3] - '0');
+
+            return (new Position(fromRow, fromCol), new Position(toRow, toCol));
         }
     }
 }
