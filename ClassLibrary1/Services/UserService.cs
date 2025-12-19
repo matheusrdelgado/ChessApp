@@ -22,12 +22,18 @@ namespace ChessApp.Model.Services
 
         private void LoadUsers()
         {
+            Users = new List<User>();
+
             if (File.Exists(UsersFilePath))
             {
                 string json = File.ReadAllText(UsersFilePath);
-                Users = System.Text.Json.JsonSerializer.Deserialize<List<User>>(json) ?? new List<User>();  
+                var loadedUsers = JsonSerializer.Deserialize<List<User>>(json);
+
+                if (loadedUsers != null)
+                {
+                    Users = loadedUsers;
+                }
             }
-            Users = new List<User>();
         }
 
         public void SaveUsers()
@@ -42,8 +48,8 @@ namespace ChessApp.Model.Services
 
         public bool Register(string username, string password)
         {
-            if(Users.Any(u => u.Username == username))
-                throw new InvalidOperationException("Username already exists.");
+            if (Users.Any(u => u.Username == username))
+                return false;
             Users.Add(new User(username, password));
             SaveUsers();
             return true;

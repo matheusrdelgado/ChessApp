@@ -41,7 +41,7 @@ namespace ChessApp.WPF.ViewModel
 
             if (string.IsNullOrWhiteSpace(Username) || string.IsNullOrWhiteSpace(password))
             {
-                MessageBox.Show("Preenche o utilizador e a password.");
+                MessageBox.Show("Missing username or password.");
                 return;
             }
 
@@ -54,7 +54,7 @@ namespace ChessApp.WPF.ViewModel
             }
             else
             {
-                MessageBox.Show("Utilizador ou password incorretos.");
+                MessageBox.Show("Incorrect username or password.");
             }
         }
 
