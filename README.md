@@ -22,7 +22,6 @@
     * Persistência de dados em JSON.
     * Histórico de partidas por utilizador.
 * **Interface (UI/UX):**
-    * Design moderno em WPF (Dark Mode).
     * Feedback visual de peças selecionadas e últimos movimentos.
 
 ## 🛠️ Tech Stack & Arquitetura
