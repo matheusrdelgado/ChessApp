@@ -9,11 +9,20 @@ namespace ChessApp.Model.Model
 {
     public class Knight : Piece
     {
+        #region Constructors
         public Knight(Position currentPosition, Color color) 
             : base(PieceType.Knight, currentPosition, color)
         {
         }
+        #endregion
 
+        #region Methods
+        /// <summary>
+        /// Determina se o cavalo pode se mover para a posicao especificada no tabuleiro
+        /// </summary>
+        /// <param name="to"></param>
+        /// <param name="board"></param>
+        /// <returns></returns>
         public override bool CanMoveTo(Position to, Board board)
         {
             if (board == null) return false;
@@ -22,8 +31,8 @@ namespace ChessApp.Model.Model
             int rowDiff = Math.Abs(to.Row - CurrentPosition.Row);
             int columnDiff = Math.Abs(to.Column - CurrentPosition.Column);  
 
-            if (to.Equals(CurrentPosition)) return false;
-            if(!((rowDiff == 2 && columnDiff == 1) || (rowDiff == 1 && columnDiff == 2))) return false;
+            if (to.Equals(CurrentPosition)) return false; // Movimento para a mesma posicao nao e permitido
+            if (!((rowDiff == 2 && columnDiff == 1) || (rowDiff == 1 && columnDiff == 2))) return false;
 
             Piece destination = board.GetPiece(to);
 
@@ -35,11 +44,20 @@ namespace ChessApp.Model.Model
             return true;
         }
 
+        /// <summary>
+        /// Clona o cavalo
+        /// </summary>
+        /// <returns></returns>
         public override Piece Clone()
         {
             return new Knight(CurrentPosition, Color);
         }
 
+        /// <summary>
+        /// Retorna uma lista de movimentos validos para o cavalo no tabuleiro especificado
+        /// </summary>
+        /// <param name="board"></param>
+        /// <returns></returns>
         public override List<Position> GetValidMoves(Board board)
         {
             List<Position> valid = new List<Position>();
@@ -57,5 +75,6 @@ namespace ChessApp.Model.Model
             }
             return valid;
         }
+        #endregion
     }
 }

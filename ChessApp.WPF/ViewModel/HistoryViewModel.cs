@@ -12,15 +12,23 @@ namespace ChessApp.WPF.ViewModel
 {
     public class HistoryViewModel : BaseViewModel
     {
+        /// <summary>
+        /// lista de ficheros de partidas guardadas
+        /// </summary>
         public ObservableCollection<string> HistoryFiles { get; set; }
 
+        /// <summary>
+        /// mensagem de estado para partidas não encontradas
+        /// </summary>
         private string _statusMessage;
         public string StatusMessage
         {
             get { return _statusMessage; }
             set { _statusMessage = value; OnPropertyChanged(); }
         }
-
+        /// <summary>
+        /// ficheiro selecionado na lista do histórico
+        /// </summary>
         private string _selectedFile;
         public string SelectedFile
         {
@@ -32,7 +40,9 @@ namespace ChessApp.WPF.ViewModel
                 LoadMatchDetails(_selectedFile);
             }
         }
-
+        /// <summary>
+        /// detalhes da partida carregados do ficheiro selecionado
+        /// </summary>
         private string _matchDetails;
         public string MatchDetails
         {
@@ -40,10 +50,16 @@ namespace ChessApp.WPF.ViewModel
             set { _matchDetails = value; OnPropertyChanged(); }
         }
 
+        /// <summary>
+        /// evento para solicitar o fecho da janela
+        /// </summary>
         public event Action OnRequestClose;
-
+        /// <summary>
+        /// comando para fechar a janela
+        /// </summary>
         public ICommand CloseCommand { get; set; }
 
+        //constructor
         public HistoryViewModel(string username)
         {
             HistoryFiles = new ObservableCollection<string>();
@@ -52,6 +68,10 @@ namespace ChessApp.WPF.ViewModel
             CloseCommand = new RelayCommand(p => OnRequestClose?.Invoke());
         }
 
+        /// <summary>
+        /// carrega o histórico de partidas do utilizador
+        /// </summary>
+        /// <param name="username"></param>
         private void LoadHistory(string username)
         {
             string folder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Saves");
@@ -81,35 +101,39 @@ namespace ChessApp.WPF.ViewModel
             }
         }
 
+        /// <summary>
+        /// carrega os detalhes da partida do ficheiro selecionado
+        /// </summary>
+        /// <param name="fileName"></param>
         private void LoadMatchDetails(string fileName)
         {
             if (string.IsNullOrEmpty(fileName)) return;
 
             try
             {
-                string folder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Saves");
-                string filePath = Path.Combine(folder, fileName);
+                string folder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Saves"); // pasta onde os ficheiros estão guardados
+                string filePath = Path.Combine(folder, fileName); // caminho completo do ficheiro
 
                 if (!File.Exists(filePath)) return;
-
+                // lê o conteúdo do ficheiro JSON
                 string jsonContent = File.ReadAllText(filePath);
 
-                StringBuilder sb = new StringBuilder();
+                StringBuilder sb = new StringBuilder(); // constrói a string de detalhes da partida
                 sb.AppendLine($"File: {fileName}");
                 sb.AppendLine("-----------------------------");
                 sb.AppendLine("Game Report:");
 
-                using (JsonDocument doc = JsonDocument.Parse(jsonContent))
+                using (JsonDocument doc = JsonDocument.Parse(jsonContent)) // parse do JSON para extrair os movimentos
                 {
                     JsonElement root = doc.RootElement; 
 
-                    if (root.ValueKind == JsonValueKind.Array)
+                    if (root.ValueKind == JsonValueKind.Array) // espera-se um array de movimentos
                     {
                         sb.AppendLine($"Total moves: {root.GetArrayLength()}");
                         sb.AppendLine("");
 
                         int turnCount = 1;
-                        foreach (JsonElement move in root.EnumerateArray())
+                        foreach (JsonElement move in root.EnumerateArray()) // itera sobre cada movimento e extrai a notação e a peça movida
                         {
                             string notation = "?";
                             if (move.TryGetProperty("Notation", out JsonElement notationEl))
@@ -130,9 +154,9 @@ namespace ChessApp.WPF.ViewModel
                     }
                 }
 
-                MatchDetails = sb.ToString();
+                MatchDetails = sb.ToString(); // atualiza os detalhes da partida na interface
             }
-            catch (Exception ex)
+            catch (Exception ex) // trata erros de leitura/parsing
             {
                 MatchDetails = "Error reading file: " + ex.Message;
             }

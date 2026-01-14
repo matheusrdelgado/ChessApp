@@ -12,8 +12,17 @@ namespace ChessApp.Model.Services
 {
     public class UserService : IUserService
     {
+        /// <summary>
+        /// caminho do ficheiro onde os utilizadores são guardados
+        /// </summary>
         private readonly string UsersFilePath;
+        /// <summary>
+        /// Lista de utilizadores registados
+        /// </summary>
         public List<User> Users { get; private set; }
+        /// <summary>
+        /// Construtor da classe UserService
+        /// </summary>
         public UserService()
         {
             string folder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Saves");
@@ -22,6 +31,9 @@ namespace ChessApp.Model.Services
             LoadUsers();
         }
 
+        /// <summary>
+        /// Carrega os utilizadores do ficheiro JSON
+        /// </summary>
         public void LoadUsers()
         {
             Users = new List<User>();
@@ -38,6 +50,9 @@ namespace ChessApp.Model.Services
             }
         }
 
+        /// <summary>
+        /// Guarda os utilizadores no ficheiro JSON
+        /// </summary>
         public void SaveUsers()
         {
             var options = new JsonSerializerOptions //Configurações de serialização
@@ -48,15 +63,27 @@ namespace ChessApp.Model.Services
             File.WriteAllText(UsersFilePath, json);
         }
 
+        /// <summary>
+        /// Regista um novo utilizador
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
         public bool Register(string username, string password)
         {
-            if (Users.Any(u => u.Username == username))
+            if (Users.Any(u => u.Username == username)) // Verifica se o utilizador ja existe
                 return false;
-            Users.Add(new User(username, password));
+            Users.Add(new User(username, password)); // Adiciona o novo utilizador a lista
             SaveUsers();
             return true;
         }
 
+        /// <summary>
+        /// Faz login
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
         public User Login(string username, string password)
         {
             return Users.FirstOrDefault(u => u.Username == username && u.Password == password); 

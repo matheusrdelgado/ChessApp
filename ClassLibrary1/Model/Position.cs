@@ -72,6 +72,11 @@ namespace ChessApp.Model.Model
             int row = 8 - Row; 
             return $"{column}{row}";
         }
+        /// <summary>
+        /// Metodo para converter a notacao de xadrez para a notacao usada para posicoes
+        /// </summary>
+        /// <param name="notation"></param>
+        /// <returns></returns>
         public static Position FromChessNotation(string notation)
         {
             int col = notation[0] - 'a';

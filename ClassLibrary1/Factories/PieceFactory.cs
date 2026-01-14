@@ -6,6 +6,14 @@ namespace ChessApp.Model.Factories
 {
     public static class PieceFactory
     {
+        /// <summary>
+        /// Metodo para criar as peças do jogo
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="position"></param>
+        /// <param name="color"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
         public static Piece CreatePiece(PieceType type, Position position, Color color)
         {
             switch (type)

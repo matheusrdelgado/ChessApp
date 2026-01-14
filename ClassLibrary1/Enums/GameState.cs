@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace ChessApp.Model.Enums
 {
+    /// <summary>
+    /// Estados possiveis do jogo
+    /// </summary>
     public enum GameState
     {
         Playing,

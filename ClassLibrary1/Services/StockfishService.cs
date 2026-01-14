@@ -9,8 +9,15 @@ namespace ChessApp.Model.Services
 {
     public class StockfishService
     {
+        /// <summary>
+        /// Processo do motor Stockfish
+        /// </summary>
         private Process stockfishProcess;
 
+        /// <summary>
+        /// Inicializa o serviço Stockfish com o caminho para o executável do motor
+        /// </summary>
+        /// <param name="pathToCheckfishExe"></param>
         public StockfishService(string pathToCheckfishExe)
         {
             stockfishProcess = new Process();
@@ -25,6 +32,11 @@ namespace ChessApp.Model.Services
             stockfishProcess.StandardInput.WriteLine("uci");
         }
 
+        /// <summary>
+        /// obtem o melhor movimento para a posicao FEN fornecida
+        /// </summary>
+        /// <param name="fen"></param>
+        /// <returns></returns>
         public async Task<string> GetBestMoveAsync(string fen)
         {
             await stockfishProcess.StandardInput.WriteLineAsync($"position fen {fen}"); //envia a posicao atual
@@ -42,7 +54,10 @@ namespace ChessApp.Model.Services
             }
             return null;
         }
-        public void Close() //fecha o processo do stockfish
+        /// <summary>
+        /// Fecha o processo do Stockfish
+        /// </summary>
+        public void Close()
         {
             if (!stockfishProcess.HasExited)
             {

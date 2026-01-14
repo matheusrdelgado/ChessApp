@@ -9,6 +9,7 @@ namespace ChessApp.Model.Model
 {
     public class Movement
     {
+        #region Properties
         public Piece PieceMoved { get; set; }
         public Position From { get; set; }
         public Position To { get; set; }
@@ -16,8 +17,10 @@ namespace ChessApp.Model.Model
         public MovementType MovementType { get; set; }
         public string Notation { get; set; } = string.Empty;
         public DateTime DateTime { get; set; } = DateTime.Now;
-        public PieceType? PromotionPiece { get; set; }   
+        public PieceType? PromotionPiece { get; set; }
+        #endregion
 
+        #region Constructors
         public Movement(Piece pieceMoved, Position from, Position to, Piece capturedPiece, MovementType movementType, string notation)
         {
             PieceMoved = pieceMoved;
@@ -27,7 +30,12 @@ namespace ChessApp.Model.Model
             MovementType = movementType;
             Notation = notation;
         }
+        #endregion
 
+        /// <summary>
+        /// Para devolver a notação do movimento
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return Notation;

@@ -17,6 +17,12 @@ namespace ChessApp.Model.Model
         #endregion
 
         #region Methods
+        /// <summary>
+        /// Determina se a dama pode se mover para a posicao no tabuleiro
+        /// </summary>
+        /// <param name="to"></param>
+        /// <param name="board"></param>
+        /// <returns></returns>
         public override bool CanMoveTo(Position to, Board board)
         {
             if (board == null) return false;
@@ -43,11 +49,20 @@ namespace ChessApp.Model.Model
             return true;
         }
 
+        /// <summary>
+        /// Clona a dama
+        /// </summary>
+        /// <returns></returns>
         public override Piece Clone()
         {
             return new Queen(CurrentPosition, Color);
         }
 
+        /// <summary>
+        /// Retorna uma lista de movimentos validos para a dama no tabuleiro
+        /// </summary>
+        /// <param name="board"></param>
+        /// <returns></returns>
         public override List<Position> GetValidMoves(Board board)
         {
             List<Position> valid = new List<Position>();

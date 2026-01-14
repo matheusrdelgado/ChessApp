@@ -12,15 +12,23 @@ using System.Windows.Shapes;
 namespace ChessApp.WPF
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// logica de interacao para MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window //partial class porque o XAML gera outra parte da classe
     {
+        /// <summary>
+        /// Inicializa uma nova instancia da classe <see cref="MainWindow"/>.
+        /// </summary>
         public MainWindow()
         {
             InitializeComponent();
         }
 
+        /// <summary>
+        /// Manipulador de evento para o botao de sair.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void BtnExit_Click(object sender, RoutedEventArgs e)
         {
             Application.Current.Shutdown();

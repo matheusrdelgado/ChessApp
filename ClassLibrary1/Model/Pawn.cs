@@ -15,6 +15,13 @@ namespace ChessApp.Model.Model
         {
         }
 
+        #region Methods
+        /// <summary>
+        /// Determina os movimentos validos do peao
+        /// </summary>
+        /// <param name="to"></param>
+        /// <param name="board"></param>
+        /// <returns></returns>
         public override bool CanMoveTo(Position to, Board board)
         {
             if (board == null) return false;
@@ -50,11 +57,20 @@ namespace ChessApp.Model.Model
             return true;
         }
 
+        /// <summary>
+        /// Clona o peao
+        /// </summary>
+        /// <returns></returns>
         public override Piece Clone()
         {
             return new Pawn(CurrentPosition, Color);
         }
 
+        /// <summary>
+        /// Retorna os movimentos validos do peao
+        /// </summary>
+        /// <param name="board"></param>
+        /// <returns></returns>
         public override List<Position> GetValidMoves(Board board)
         {
             List<Position> valid = new List<Position>();
@@ -73,6 +89,10 @@ namespace ChessApp.Model.Model
             return valid;
         }
 
+        /// <summary>
+        /// Verifica se o peao pode ser promovido
+        /// </summary>
+        /// <returns></returns>
         public bool CanPromote()
         {
             if(Color == Color.White && CurrentPosition.Row == 0)
@@ -82,6 +102,10 @@ namespace ChessApp.Model.Model
             return false;
         }
 
+        /// <summary>
+        /// Retorna as opcoes de promocao do peao
+        /// </summary>
+        /// <returns></returns>
         public List<PieceType> GetPromotionOptions()
         {
             return new List<PieceType> { PieceType.Queen, PieceType.Rook, PieceType.Bishop, PieceType.Knight };

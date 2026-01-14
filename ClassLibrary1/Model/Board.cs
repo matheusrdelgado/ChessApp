@@ -229,6 +229,13 @@ namespace ChessApp.Model.Model
             PlacePiece(PieceFactory.CreatePiece(PieceType.Rook, new Position(7, 7), Color.White));
         }
 
+        /// <summary>
+        /// Gera a representação FEN do tabuleiro atual
+        /// Fen é uma notação padrão para descrever posições de xadrez
+        /// </summary>
+        /// <param name="CurrentTurn"></param>
+        /// <param name="enPassantSquare"></param>
+        /// <returns></returns>
         public string GetFen(Color CurrentTurn, Position enPassantSquare = null)
         {
             StringBuilder fen = new StringBuilder();
@@ -292,6 +299,12 @@ namespace ChessApp.Model.Model
             fen.Append(" 0 1");
             return fen.ToString();
         }
+
+        /// <summary>
+        /// Retorna o caractere correspondente à peça para a notação FEN
+        /// </summary>
+        /// <param name="piece"></param>
+        /// <returns></returns>
         private char GetPieceChar(Piece piece)
         {
             char c = ' ';

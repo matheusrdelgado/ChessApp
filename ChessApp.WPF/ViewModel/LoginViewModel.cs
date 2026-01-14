@@ -34,6 +34,10 @@ namespace ChessApp.WPF.ViewModel
             OpenRegisterCommand = new RelayCommand(p => OpenRegister());
         }
 
+        /// <summary>
+        /// Metodo para realizar login
+        /// </summary>
+        /// <param name="parameter"></param>
         private void PerformLogin(object parameter)
         {
             var passwordBox = parameter as PasswordBox;
@@ -47,17 +51,20 @@ namespace ChessApp.WPF.ViewModel
 
             var user = _userService.Login(Username, password);
 
-            if (user != null)
+            if (user != null) // Login successful
             {
                 LoggedUser = user;
                 OnRequestClose?.Invoke(true); 
             }
-            else
+            else // Login failed
             {
                 MessageBox.Show("Incorrect username or password.");
             }
         }
 
+        /// <summary>
+        /// metodo para abrir a janela de registo
+        /// </summary>
         private void OpenRegister()
         {
             var registerWin = new Views.RegisterWindow();

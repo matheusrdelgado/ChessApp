@@ -14,12 +14,20 @@ namespace ChessApp.Model.Services
     {
         private readonly string GameDirectory;
 
+        /// <summary>
+        /// inicializa o servico de ficheiros de jogo
+        /// </summary>
         public GameFileService()
         {
             GameDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Saves");
             Directory.CreateDirectory(GameDirectory);
         }
 
+        /// <summary>
+        /// Guarda o estado do jogo num ficheiro JSON
+        /// </summary>
+        /// <param name="game"></param>
+        /// <param name="fileName"></param>
         public void SaveGame(Game game, string fileName)
         {
             if(!fileName.EndsWith(".json"))
@@ -33,6 +41,12 @@ namespace ChessApp.Model.Services
             File.WriteAllText(filePath, jsonString);
         }
 
+        /// <summary>
+        /// Carrega o estado do jogo a partir de um ficheiro JSON
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
+        /// <exception cref="FileNotFoundException"></exception>
         public Game LoadGame(string fileName)
         {
             if (!fileName.EndsWith(".json"))

@@ -17,7 +17,6 @@ namespace ChessApp.WPF.ViewModel
 {
     public class GameViewModel : BaseViewModel
     {
-        //services
         private readonly IUserService _userService;
         private readonly IGameFileService _gameFileService;
         private StockfishService _stockfishService;
@@ -31,8 +30,8 @@ namespace ChessApp.WPF.ViewModel
 
         public bool IsPvE { get; private set; }
 
-        //Game State
         private bool _isGameRunning;
+        //game running
         public bool IsGameRunning
         {
             get { return _isGameRunning; }
@@ -75,6 +74,9 @@ namespace ChessApp.WPF.ViewModel
         private Visibility _userAreaVisibility = Visibility.Collapsed;
         public Visibility UserAreaVisibility { get { return _userAreaVisibility; } set { _userAreaVisibility = value; OnPropertyChanged(); } }
 
+        /// <summary>
+        /// Comandos para botoes e interacoes do jogo
+        /// </summary>
         public ICommand NewGameCommand { get; set; }
         public ICommand LoginCommand { get; set; }
         public ICommand RegisterCommand { get; set; }
@@ -88,6 +90,9 @@ namespace ChessApp.WPF.ViewModel
         public ICommand NewGamePvECommand { get; set; }
         public ICommand NewGamePvEBlackCommand { get; set; }
 
+        /// <summary>
+        /// Construtor do GameViewModel
+        /// </summary>
         public GameViewModel()
         {
             //Initialize Services
@@ -101,8 +106,8 @@ namespace ChessApp.WPF.ViewModel
             RefreshBoard();
             IsGameRunning = false;
 
-            
-            NewGameCommand = new RelayCommand(param => // => lambda function
+  
+            NewGameCommand = new RelayCommand(param => // => funcao lambda para comandos simples, ou seja, sem muitos passos
             {
                 IsPvE = false;
                 PlayerColor = Color.White;
@@ -124,7 +129,7 @@ namespace ChessApp.WPF.ViewModel
             LoginCommand = new RelayCommand(p => PerformLogin(p));
             RegisterCommand = new RelayCommand(p => PerformRegister(p));
 
-
+            //login/logout commands
             OpenLoginCommand = new RelayCommand(p =>
             {
                 var loginWin = new LoginWindow();
@@ -143,7 +148,7 @@ namespace ChessApp.WPF.ViewModel
             ResignCommand = new RelayCommand(p => Resign());
             CloseCommand = new RelayCommand(p => Application.Current.Shutdown());
 
-            try
+            try //inicializa stockfish
             {
                 string path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Engine", "stockfish.exe");
 
@@ -156,12 +161,16 @@ namespace ChessApp.WPF.ViewModel
                     MessageBox.Show("Stockfish.exe wasn't found in Engine directory.");
                 }
             }
-            catch (Exception ex)
+            catch (Exception ex) //trata erro de inicializacao
             {
                 MessageBox.Show("Failed to load stockfish: " + ex.Message);
             }
         }
 
+        /// <summary>
+        /// metodo de login
+        /// </summary>
+        /// <param name="parameter"></param>
         private void PerformLogin(object parameter)
         {
             //gets parameter so password box is able to read it
@@ -188,6 +197,10 @@ namespace ChessApp.WPF.ViewModel
             }
         }
 
+        /// <summary>
+        /// metodo de registo
+        /// </summary>
+        /// <param name="parameter"></param>
         private void PerformRegister(object parameter)
         {
             var passwordBox = parameter as PasswordBox;
@@ -213,6 +226,9 @@ namespace ChessApp.WPF.ViewModel
             }
         }
 
+        /// <summary>
+        /// Inicia um novo jogo
+        /// </summary>
         private void StartNewGame()
         {
             Game = new Game();
@@ -230,6 +246,9 @@ namespace ChessApp.WPF.ViewModel
             }
         }
 
+        /// <summary>
+        /// guarda o jogo atual
+        /// </summary>
         private void SaveCurrentGame()
         {
             if (Game.MoveHistory.Count > 0)
@@ -240,6 +259,9 @@ namespace ChessApp.WPF.ViewModel
             }
         }
 
+        /// <summary>
+        /// Inicializa os visuais do tabuleiro
+        /// </summary>
         private void InitializeBoardVisuals()
         {
             if (PlayerColor == Color.White)
@@ -264,6 +286,12 @@ namespace ChessApp.WPF.ViewModel
             }
         }
 
+        /// <summary>
+        /// Cria um quadrado no tabuleiro para a posicao dada
+        /// com o objetivo de adicionar comandos de clique
+        /// </summary>
+        /// <param name="row"></param>
+        /// <param name="col"></param>
         private void CreateSquare(int row, int col)
         {
             var square = new SquareViewModel(new Position(row, col));
@@ -271,6 +299,10 @@ namespace ChessApp.WPF.ViewModel
             BoardSquares.Add(square);
         }
 
+        /// <summary>
+        /// Metodo chamado quando um quadrado e clicado
+        /// </summary>
+        /// <param name="clickedSquare"></param>
         private void OnSquareClicked(SquareViewModel clickedSquare)
         {
             if (!IsGameRunning)
@@ -333,6 +365,9 @@ namespace ChessApp.WPF.ViewModel
             
         }
 
+        /// <summary>
+        /// Verifica se o jogo acabou
+        /// </summary>
         private void CheckGameOver()
         {
             if (Game.State == GameState.Checkmate)
@@ -349,6 +384,10 @@ namespace ChessApp.WPF.ViewModel
                 ReturnToMenu();
             }
         }
+
+        /// <summary>
+        /// Reseta a cor de todos os quadrados do tabuleiro quando um movimento e feito
+        /// </summary>
         private void ResetAllSquares()
         {
             foreach (var square in BoardSquares)
@@ -356,7 +395,9 @@ namespace ChessApp.WPF.ViewModel
                 square.ResetColor();
             }
         }
-
+        /// <summary>
+        /// Atualiza as pecas no tabuleiro visual
+        /// </summary>
         public void RefreshBoard()
         {
             foreach(var square in BoardSquares)
@@ -367,6 +408,9 @@ namespace ChessApp.WPF.ViewModel
             }
         }
 
+        /// <summary>
+        /// Atualiza as visibilidades dos botoes de login/logout
+        /// </summary>
         private void UpdateVisibilities()
         {
             if (CurrentUser != null)
@@ -381,6 +425,9 @@ namespace ChessApp.WPF.ViewModel
             }
         }
 
+        /// <summary>
+        /// Metodo para desistir do jogo
+        /// </summary>
         private void Resign()
         {
             MessageBox.Show($"Game over. {(Game.CurrentTurn == Color.White ? "Black" : "White")} Won!");
@@ -388,6 +435,9 @@ namespace ChessApp.WPF.ViewModel
             ReturnToMenu();
         }
 
+        /// <summary>
+        /// Retorna ao menu principal
+        /// </summary>
         private void ReturnToMenu()
         {
             MenuVisibility = Visibility.Visible;
@@ -395,6 +445,9 @@ namespace ChessApp.WPF.ViewModel
             BoardSquares.Clear();
         }
 
+        /// <summary>
+        /// guarda automaticamente o jogo quando acaba
+        /// </summary>
         private void AutoSaveGame()
         {
             if (CurrentUser != null && Game.MoveHistory.Any())
@@ -413,6 +466,12 @@ namespace ChessApp.WPF.ViewModel
             }
         }
 
+        /// <summary>
+        /// Parseia a string de movimento do Stockfish para posicoes de origem e destino
+        /// ou seja, converte "e2e4" para (6,4) e (4,4)
+        /// </summary>
+        /// <param name="moveString"></param>
+        /// <returns></returns>
         private (Position from, Position to) ParseStockfishMove(string moveString)
         {
             // moveString ex: "e2e4" ou "e7e8q" (promotion)
@@ -426,6 +485,9 @@ namespace ChessApp.WPF.ViewModel
             return (new Position(fromRow, fromCol), new Position(toRow, toCol));
         }
 
+        /// <summary>
+        /// metodo para o stockfish jogar
+        /// </summary>
         private async void PlayBotTurn()
         {
             if (_stockfishService == null)
@@ -434,7 +496,7 @@ namespace ChessApp.WPF.ViewModel
                 return;
             }
 
-            await Task.Delay(500); //500ms de delay
+            await Task.Delay(500); //500ms de delay para parecer mais humano
 
             try
             {

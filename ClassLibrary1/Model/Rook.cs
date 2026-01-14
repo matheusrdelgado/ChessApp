@@ -18,6 +18,12 @@ namespace ChessApp.Model.Model
         #endregion
 
         #region Methods
+        /// <summary>
+        /// Determina se a torre pode se mover para a posicao do tabuleiro
+        /// </summary>
+        /// <param name="to"></param>
+        /// <param name="board"></param>
+        /// <returns></returns>
         public override bool CanMoveTo(Position to, Board board)
         {
             if (!to.IsValid()) return false;
@@ -42,14 +48,21 @@ namespace ChessApp.Model.Model
             return true;
         }
 
-
+        /// <summary>
+        /// Clona a torre
+        /// </summary>
+        /// <returns></returns>
         public override Piece Clone()
         {
             return new Rook(CurrentPosition, Color);
         }
 
 
-
+        /// <summary>
+        /// Retorna uma lista de movimentos validos para a torre
+        /// </summary>
+        /// <param name="board"></param>
+        /// <returns></returns>
         public override List<Position> GetValidMoves(Board board)
         {
             List<Position> valid = new List<Position>();

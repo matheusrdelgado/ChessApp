@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace ChessApp.Model.Enums
 {
+    /// <summary>
+    /// Tipos de Moviementos especiais
+    /// </summary>
     public enum MovementType
     {
         Normal,

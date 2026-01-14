@@ -30,33 +30,37 @@ namespace ChessApp.WPF.ViewModel
             CancelCommand = new RelayCommand(p => OnRequestClose?.Invoke());
         }
 
+        /// <summary>
+        /// faz o registo do utilizador
+        /// </summary>
+        /// <param name="parameter"></param>
         private void PerformRegister(object parameter)
         {
-            var window = parameter as Views.RegisterWindow;
+            var window = parameter as Views.RegisterWindow; // Aceder à janela de registo para obter as passwords
             if (window == null) return;
 
             string p1 = window.txtRegPass.Password;
             string p2 = window.txtRegConfirm.Password;
 
-            if (string.IsNullOrWhiteSpace(Username) || string.IsNullOrWhiteSpace(p1))
+            if (string.IsNullOrWhiteSpace(Username) || string.IsNullOrWhiteSpace(p1)) // Verifica se o username ou password estão vazios
             {
                 MessageBox.Show("Missing username or password.");
                 return;
             }
 
-            if (p1 != p2)
+            if (p1 != p2) // Verifica se as passwords coincidem
             {
                 MessageBox.Show("Passwords must match!");
                 return;
             }
 
-            if (_userService.Register(Username, p1))
+            if (_userService.Register(Username, p1)) // Tenta registar o utilizador
             {
                 MessageBox.Show("Successfully registered. Please log in");
                 _userService.SaveUsers();
                 OnRequestClose?.Invoke();
             }
-            else
+            else // Se o registo falhar, informa que o username já existe
             {
                 MessageBox.Show("This username already exists.");
             }

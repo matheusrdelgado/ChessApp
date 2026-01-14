@@ -9,7 +9,7 @@ namespace ChessApp.Model.Model
 {
     public class King : Piece
     {
-        #region Atributes
+        #region Constructors
         public King(Position currentPosition, Color color)
             : base(PieceType.King, currentPosition, color)
         {
@@ -17,10 +17,22 @@ namespace ChessApp.Model.Model
         #endregion
 
         #region Methods
+
+        /// <summary>
+        /// Clona a peça Rei
+        /// </summary>
+        /// <returns></returns>
         public override Piece Clone()
         {
             return new King(CurrentPosition, Color);
         }
+
+        /// <summary>
+        /// Verifica se o movimento é válido para o Rei
+        /// </summary>
+        /// <param name="to"></param>
+        /// <param name="board"></param>
+        /// <returns></returns>
         public override bool CanMoveTo(Position to, Board board)
         {
             if (!to.IsValid()) return false;
@@ -38,7 +50,7 @@ namespace ChessApp.Model.Model
 
                 return false; // Peça amiga
             }
-            if (rowDiff == 0 && columnDiff == 2)
+            if (rowDiff == 0 && columnDiff == 2) // Movimento de roque
             {
                 if (to.Column > CurrentPosition.Column)
                 {
@@ -54,6 +66,11 @@ namespace ChessApp.Model.Model
 
         }
 
+        /// <summary>
+        /// Obtem todos os movimentos validos para o Rei
+        /// </summary>
+        /// <param name="board"></param>
+        /// <returns></returns>
         public override List<Position> GetValidMoves(Board board)
         {
             List<Position> valid = new List<Position>();

@@ -8,6 +8,9 @@ namespace ChessApp.Tests.Tests
 {
     public class GameLogicTests
     {
+        /// <summary>
+        /// testa se a nova partida inicializa o tabuleiro corretamente
+        /// </summary>
         [Fact]
         public void NewGame_Should_InitializeBoardCorrectly() //basic game initiantion
         {
@@ -21,6 +24,9 @@ namespace ChessApp.Tests.Tests
             Assert.Equal(Color.White, game.CurrentTurn); 
         }
 
+        /// <summary>
+        /// testa se o peão pode mover duas casas para frente em seu primeiro movimento
+        /// </summary>
         [Fact]
         public void Pawn_Should_Move_Forward_Two_Squares_On_First_Move()
         {
@@ -36,6 +42,9 @@ namespace ChessApp.Tests.Tests
             Assert.Equal(Color.Black, game.CurrentTurn);
         }
 
+        /// <summary>
+        /// testa se o cavalo pode pular sobre outras peças
+        /// </summary>
         [Fact]
         public void Knight_Should_Jump_Over_Pieces()
         {
@@ -50,6 +59,9 @@ namespace ChessApp.Tests.Tests
             Assert.Equal(PieceType.Knight, knight.PieceType);
         }
 
+        /// <summary>
+        /// testa se o jogador não pode mover peças do oponente
+        /// </summary>
         [Fact]
         public void Player_Should_Not_Move_Opponent_Pieces()
         {
@@ -62,6 +74,9 @@ namespace ChessApp.Tests.Tests
             });
         }
 
+        /// <summary>
+        /// testa se o roque é permitido
+        /// </summary>
         [Fact]
         public void Castling_Should_Be_Allowed_Short_Castle()
         {
@@ -86,6 +101,9 @@ namespace ChessApp.Tests.Tests
             Assert.Equal(PieceType.Rook, rook.PieceType);
         }
 
+        /// <summary>
+        /// testa se o mate do bispo é reconhecido corretamente
+        /// </summary>
         [Fact]
         public void ScholarsMate_Should_Result_In_Checkmate()
         {

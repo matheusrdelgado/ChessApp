@@ -18,6 +18,12 @@ namespace ChessApp.Model.Model
         #endregion
 
         #region Methods
+        /// <summary>
+        /// Determina se uma peça pode se mover para a posição especificada no tabuleiro.
+        /// </summary>
+        /// <param name="to"></param>
+        /// <param name="board"></param>
+        /// <returns></returns>
         public override bool CanMoveTo(Position to, Board board)
         {
             if (board == null) return false;
@@ -45,11 +51,20 @@ namespace ChessApp.Model.Model
 
         }
 
+        /// <summary>
+        /// Cria uma cópia da peça Bispo atual.
+        /// </summary>
+        /// <returns></returns>
         public override Piece Clone()
         {
             return new Bishop(CurrentPosition, Color);
         }
 
+        /// <summary>
+        /// Obtém todos os movimentos válidos para o bispo no tabuleiro especificado.
+        /// </summary>
+        /// <param name="board"></param>
+        /// <returns></returns>
         public override List<Position> GetValidMoves(Board board)
         {
             List<Position> valid = new List<Position>();

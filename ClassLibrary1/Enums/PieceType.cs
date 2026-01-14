@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace ChessApp.Model.Enums
 {
+    /// <summary>
+    /// Tipos de pecas do xadrez
+    /// </summary>
     public enum PieceType
     {
         Pawn,

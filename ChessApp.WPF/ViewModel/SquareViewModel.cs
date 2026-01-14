@@ -11,13 +11,22 @@ namespace ChessApp.WPF.ViewModel
 {
     public class SquareViewModel : BaseViewModel
     {
+        /// <summary>
+        /// Posição do quadrado no tabuleiro.
+        /// </summary>
         public Position Position { get; private set; }
 
+        /// <summary>
+        /// cores de fundo para os quadrados claros e escuros do tabuleiro
+        /// </summary>
         private static readonly SolidColorBrush LightColor = new SolidColorBrush((System.Windows.Media.Color)ColorConverter.ConvertFromString("#EBF3F5"));
         private static readonly SolidColorBrush DarkColor = new SolidColorBrush((System.Windows.Media.Color)ColorConverter.ConvertFromString("#8CA2AD"));
         private static readonly SolidColorBrush HighlightColor = new SolidColorBrush((System.Windows.Media.Color)ColorConverter.ConvertFromString("#F6F696"));
         private static readonly SolidColorBrush PossibleMoveColor = new SolidColorBrush((System.Windows.Media.Color)ColorConverter.ConvertFromString("#A9D08E"));
 
+        /// <summary>
+        /// Cor de fundo atual do quadrado.
+        /// </summary>
         private Brush _backGroundColor;
         public Brush BackgroundColor 
         {
@@ -29,13 +38,19 @@ namespace ChessApp.WPF.ViewModel
             }
         }
         public ICommand ClickCommand { get; set; }
-
+        /// <summary>
+        /// construtor
+        /// </summary>
+        /// <param name="position"></param>
         public SquareViewModel(Position position)
         {
             Position = position;
             ResetColor();
         }
 
+        /// <summary>
+        /// mostra a imagem da peça no quadrado
+        /// </summary>
         private string _pieceImage;
         public string PieceImage
         {
@@ -47,6 +62,10 @@ namespace ChessApp.WPF.ViewModel
             }
         }
 
+        /// <summary>
+        /// atualiza a imagem da peça no quadrado
+        /// </summary>
+        /// <param name="piece"></param>
         public void UpdatePiece(Piece piece)
         {
             if (piece == null)
@@ -103,11 +122,17 @@ namespace ChessApp.WPF.ViewModel
                 }
             }
         }
+        /// <summary>
+        /// destaca os quadrados possíveis para o movimento
+        /// </summary>
         public void Highlight()
         {
             BackgroundColor = HighlightColor;
         }
 
+        /// <summary>
+        /// reseta a cor do quadrado para a cor original
+        /// </summary>
         public void ResetColor()
         {
             if ((Position.Row + Position.Column) % 2 == 0)
@@ -120,6 +145,9 @@ namespace ChessApp.WPF.ViewModel
             }
         }
 
+        /// <summary>
+        /// destaca os quadrados possíveis para o movimento
+        /// </summary>
         public void HighlightPossibleMove()
         {
             BackgroundColor = PossibleMoveColor;
