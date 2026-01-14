@@ -58,5 +58,6 @@ namespace ChessApp.Model.Model
         {
             Draws++;
         }
+        #endregion
     }
 }

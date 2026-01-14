@@ -110,5 +110,7 @@ namespace ChessApp.Model.Model
         {
             return new List<PieceType> { PieceType.Queen, PieceType.Rook, PieceType.Bishop, PieceType.Knight };
         }
+
+        #endregion
     }
 }
