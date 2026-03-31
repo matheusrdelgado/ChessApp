@@ -519,5 +519,39 @@ namespace ChessApp.WPF.ViewModel
                 MessageBox.Show($"Engine exploded {ex.Message}");
             }
         }
+
+        /// <summary>
+        /// Processa o arrastar e soltar de uma casa para outra no tabuleiro.
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="target"></param>
+        public void ProcessDragDrop(SquareViewModel source, SquareViewModel target)
+        {
+            if (!IsGameRunning) return;
+            if (source == target) return;
+
+            var piece = Game.Board.GetPiece(source.Position);
+            if (piece == null || piece.Color != Game.CurrentTurn) return;
+
+            try
+            {
+                Game.MakeMove(source.Position, target.Position);
+
+                _selectedSquare = null;
+                ResetAllSquares();
+                RefreshBoard();
+                CheckGameOver();
+
+                if (IsGameRunning && IsPvE && Game.CurrentTurn != PlayerColor)
+                {
+                    PlayBotTurn();
+                }
+            }
+            catch (Exception)
+            {
+                _selectedSquare = null;
+                ResetAllSquares();
+            }
+        }
     }
 }

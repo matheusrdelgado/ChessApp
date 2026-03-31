@@ -101,14 +101,16 @@
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Border Background="{Binding BackgroundColor}" BorderThickness="0">
-
+                            <Border Background="{Binding BackgroundColor}" BorderThickness="0"
+                                    AllowDrop="True" 
+                                    MouseMove="Square_MouseMove" 
+                                    Drop="Square_Drop"
+                                    Tag="{Binding}">
                                 <Border.InputBindings>
                                     <MouseBinding Gesture="LeftClick" Command="{Binding ClickCommand}" />
                                 </Border.InputBindings>
-
                                 <Image Source="{Binding PieceImage}" Margin="5"
-                                       RenderOptions.BitmapScalingMode="HighQuality"/>
+               RenderOptions.BitmapScalingMode="HighQuality"/>
                             </Border>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>

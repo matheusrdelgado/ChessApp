@@ -33,5 +33,47 @@ namespace ChessApp.WPF
         {
             Application.Current.Shutdown();
         }
+
+        /// <summary>
+        /// Manipulador de evento para o movimento do mouse sobre uma casa do tabuleiro.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Square_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed && sender is FrameworkElement element)
+            {
+                var square = element.Tag as ViewModel.SquareViewModel;
+                if (square != null && square.PieceImage != null)
+                {
+                    if (square.ClickCommand != null && square.ClickCommand.CanExecute(null))
+                    {
+                        square.ClickCommand.Execute(null);
+                    }
+
+                    DragDrop.DoDragDrop(element, square, DragDropEffects.Move);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Manipulador de evento para o movimento do mouse sobre uma casa do tabuleiro.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Square_Drop(object sender, DragEventArgs e)
+        {
+            if (sender is FrameworkElement targetElement && e.Data.GetDataPresent(typeof(ViewModel.SquareViewModel)))
+            {
+                var sourceSquare = e.Data.GetData(typeof(ViewModel.SquareViewModel)) as ViewModel.SquareViewModel;
+                var targetSquare = targetElement.Tag as ViewModel.SquareViewModel;
+
+                var vm = DataContext as ViewModel.GameViewModel;
+                if (vm != null && sourceSquare != null && targetSquare != null)
+                {
+                    vm.ProcessDragDrop(sourceSquare, targetSquare);
+                }
+            }
+        }
     }
 }
