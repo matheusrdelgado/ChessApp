@@ -498,7 +498,7 @@ namespace ChessApp.WPF.ViewModel
 
             await Task.Delay(500); //500ms de delay para parecer mais humano
 
-            try
+            try //pega o melhor movimento do stockfish e faz o movimento
             {
                 string fen = Game.GetCurrentFen();
                 string bestMoveString = await _stockfishService.GetBestMoveAsync(fen);
@@ -514,7 +514,7 @@ namespace ChessApp.WPF.ViewModel
                     CheckGameOver();
                 }
             }
-            catch (Exception ex)
+            catch (Exception ex) //trata erros do stockfish
             {
                 MessageBox.Show($"Engine exploded {ex.Message}");
             }

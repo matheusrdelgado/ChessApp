@@ -26,7 +26,7 @@ namespace ChessApp.Tests.Tests
         /// <summary>
         /// Teste para registar um novo utilizador e verificar se os dados são salvos corretamente
         /// </summary>
-        [Fact] // fact é um atributo do xunit que indica que este método é um teste
+        [Fact] // fact é um atributo do xunit que indica que este método é um teste. O fact automatiza a verificacao da logica. O uso de asserts garante que o teste falha se a condição nao for atendida e não é preciso verificar manualmente o resultado
         public void Register_Should_Create_New_User_And_Save_To_File()
         {
             var service = new UserService();
@@ -106,6 +106,33 @@ namespace ChessApp.Tests.Tests
             if (File.Exists(_testSavePath))
             {
                 File.Delete(_testSavePath);
+            }
+        }
+
+        /// <summary>
+        /// Teste manual para registar um novo utilizador e verificar se o registo foi bem sucedido
+        /// </summary>
+        public void TesteRegistoManual()
+        {
+            var service = new UserService();
+            try
+            {
+                bool sucesso = service.Register("UtilizadorManual", "123");
+
+                if (!sucesso)
+                {
+                    throw new Exception("Registo falhou");
+                }
+                var user = service.Login("UtilizadorManual", "123");
+                if (user == null || user.Username != "UtilizadorManual")
+                {
+                    throw new Exception("Falha, nao foi encontrado o utilizador");
+                }
+                Console.WriteLine("Teste manual de registo passou com sucesso.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Teste manual de registo falhou: {ex.Message}");
             }
         }
     }

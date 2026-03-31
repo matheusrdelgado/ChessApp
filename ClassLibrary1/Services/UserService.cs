@@ -86,7 +86,7 @@ namespace ChessApp.Model.Services
         /// <returns></returns>
         public User Login(string username, string password)
         {
-            return Users.FirstOrDefault(u => u.Username == username && u.Password == password); 
+            return null; // Users.FirstOrDefault(u => u.Username == username && u.Password == password); 
         }
 
 
