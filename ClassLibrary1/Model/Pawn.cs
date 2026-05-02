@@ -52,7 +52,7 @@ namespace ChessApp.Model.Model
             if (rowDiff == 1 && columnDiff == 0 && destination != null) return false;
 
 
-            if (columnDiff == 1 && rowDiff == 1 && destination == null) return false;
+            if (columnDiff == 1 && rowDiff == 1 && destination == null && (board.EnPassantTarget == null || !board.EnPassantTarget.Equals(to))) return false;
             if (columnDiff == 1 && rowDiff == 1 && destination != null && destination.Color == Color) return false;
             return true;
         }

@@ -12,6 +12,7 @@ namespace ChessApp.Model.Model
     public class Board
     {
         private Piece[,] Squares { get; set; }
+        public Position EnPassantTarget { get; set; }
 
         #region Constructor
         public Board() //construtor nao recebe parametros para iniciar o array dentro do construtor

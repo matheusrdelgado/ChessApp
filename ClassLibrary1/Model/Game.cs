@@ -46,6 +46,8 @@ namespace ChessApp.Model.Model
             if (piece.Color != CurrentTurn)
                 throw new InvalidOperationException("Not this piece's turn.");
 
+            Board.EnPassantTarget = GetEnPassantTarget();
+
 
             if (!piece.CanMoveTo(to, Board)) //logica para o movimento normal
                 throw new InvalidOperationException("Invalid move.");
