@@ -37,10 +37,11 @@ namespace ChessApp.Model.Services
         /// </summary>
         /// <param name="fen"></param>
         /// <returns></returns>
-        public async Task<string> GetBestMoveAsync(string fen)
+        public async Task<string> GetBestMoveAsync(string fen, int skillLevel,  int moveTimeMs)
         {
+            await stockfishProcess.StandardInput.WriteLineAsync($"setoption name Skill Level value {skillLevel}");
             await stockfishProcess.StandardInput.WriteLineAsync($"position fen {fen}"); //envia a posicao atual
-            await stockfishProcess.StandardInput.WriteLineAsync("go movetime 500"); //manda a engine pensar 500ms (depois definir aqui a dificuldade do bot)
+            await stockfishProcess.StandardInput.WriteLineAsync($"go movetime {moveTimeMs}"); //movetime um dos parametros de dificuldade da engine
 
             string line;
             while ((line = await stockfishProcess.StandardOutput.ReadLineAsync()) != null) //le a resopsta ate encontrar o bestmove

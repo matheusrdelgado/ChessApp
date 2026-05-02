@@ -35,8 +35,8 @@ namespace ChessApp.WPF.ViewModel
         public bool IsGameRunning
         {
             get { return _isGameRunning; }
-            set 
-            { 
+            set
+            {
                 _isGameRunning = value;
                 OnPropertyChanged();
             }
@@ -57,7 +57,7 @@ namespace ChessApp.WPF.ViewModel
             {
                 _currentUser = value;
                 OnPropertyChanged();
-                UpdateVisibilities(); 
+                UpdateVisibilities();
             }
         }
         //Menu or game window
@@ -87,8 +87,30 @@ namespace ChessApp.WPF.ViewModel
         public ICommand GiveUpCommand { get; set; }
         public ICommand ResignCommand { get; set; }
         public ICommand CloseCommand { get; set; }
-        public ICommand NewGamePvECommand { get; set; }
-        public ICommand NewGamePvEBlackCommand { get; set; }
+        public ICommand ShowPvEPanelCommand { get; set; }
+        public ICommand SetColorCommand { get; set; }
+        public int MoveTimeMs { get; set; }
+        public int SkillLevel { get; set; }
+        public ICommand SetDifficultyCommand { get; set; }
+        public ICommand ConfirmPvECommand { get; set; }
+        private Visibility _difficultyPanelVisibility = Visibility.Collapsed;
+        public Visibility DifficultyPanelVisibility
+        {
+            get { return _difficultyPanelVisibility; }
+            set { _difficultyPanelVisibility = value; OnPropertyChanged(); }
+        }
+        private string _selectedColorText = "";
+        public string SelectedColorText
+        {
+            get { return _selectedColorText; }
+            set { _selectedColorText = value; OnPropertyChanged(); }
+        }
+        private string _selectedDifficultyText = "";
+        public string SelectedDifficultyText
+        {
+            get { return _selectedDifficultyText; }
+            set { _selectedDifficultyText = value; OnPropertyChanged(); }
+        }
 
         /// <summary>
         /// Construtor do GameViewModel
@@ -106,25 +128,42 @@ namespace ChessApp.WPF.ViewModel
             RefreshBoard();
             IsGameRunning = false;
 
-  
+
             NewGameCommand = new RelayCommand(param => // => funcao lambda para comandos simples, ou seja, sem muitos passos
             {
                 IsPvE = false;
                 PlayerColor = Color.White;
                 StartNewGame();
             });
-            NewGamePvECommand = new RelayCommand(param =>
+
+            ShowPvEPanelCommand = new RelayCommand(param =>
             {
                 IsPvE = true;
-                PlayerColor = Color.White;
-                StartNewGame();
+                DifficultyPanelVisibility = Visibility.Visible;
             });
-            NewGamePvEBlackCommand = new RelayCommand(param =>
+
+            SetColorCommand = new RelayCommand(param =>
             {
-                IsPvE = true;
-                PlayerColor = Color.Black;
+                if (param as string == "White")
+                {
+                    PlayerColor = Color.White;
+                    SelectedColorText = "⬜ White selected";
+                }
+                else
+                {
+                    PlayerColor = Color.Black;
+                    SelectedColorText = "⬛ Black selected";
+                }
+            });
+
+            SetDifficultyCommand = new RelayCommand(param => SetDifficultyParams(param as string));
+
+            ConfirmPvECommand = new RelayCommand(param =>
+            {
+                DifficultyPanelVisibility = Visibility.Collapsed;
                 StartNewGame();
             });
+
             SaveGameCommand = new RelayCommand(param => SaveCurrentGame(), param => IsGameRunning);
             LoginCommand = new RelayCommand(p => PerformLogin(p));
             RegisterCommand = new RelayCommand(p => PerformRegister(p));
@@ -362,7 +401,7 @@ namespace ChessApp.WPF.ViewModel
                     _selectedSquare = null;
                 }
             }
-            
+
         }
 
         /// <summary>
@@ -400,7 +439,7 @@ namespace ChessApp.WPF.ViewModel
         /// </summary>
         public void RefreshBoard()
         {
-            foreach(var square in BoardSquares)
+            foreach (var square in BoardSquares)
             {
                 Piece piece = Game.Board.GetPiece(square.Position);
 
@@ -443,6 +482,7 @@ namespace ChessApp.WPF.ViewModel
             MenuVisibility = Visibility.Visible;
             GameVisibility = Visibility.Collapsed;
             BoardSquares.Clear();
+            DifficultyPanelVisibility = Visibility.Collapsed;
         }
 
         /// <summary>
@@ -496,12 +536,12 @@ namespace ChessApp.WPF.ViewModel
                 return;
             }
 
-            await Task.Delay(500); //500ms de delay para parecer mais humano
+            await Task.Delay(1000); //1000ms de delay para humanizar
 
             try //pega o melhor movimento do stockfish e faz o movimento
             {
                 string fen = Game.GetCurrentFen();
-                string bestMoveString = await _stockfishService.GetBestMoveAsync(fen);
+                string bestMoveString = await _stockfishService.GetBestMoveAsync(fen, SkillLevel, MoveTimeMs);    
 
                 if (!string.IsNullOrEmpty(bestMoveString))
                 {
@@ -551,6 +591,37 @@ namespace ChessApp.WPF.ViewModel
             {
                 _selectedSquare = null;
                 ResetAllSquares();
+            }
+        }
+        private void SetDifficultyParams(string difficulty)
+        {
+            switch (difficulty)
+            {
+                case "Beginner":
+                    SkillLevel = 3;
+                    MoveTimeMs = 100;
+                    SelectedDifficultyText = "✔ Beginner";
+                    break;
+                case "Intermediate":
+                    SkillLevel = 8;
+                    MoveTimeMs = 500;
+                    SelectedDifficultyText = "✔ Intermediate";
+                    break;
+                case "Advanced":
+                    SkillLevel = 14;
+                    MoveTimeMs = 1000;
+                    SelectedDifficultyText = "✔ Advanced";
+                    break;
+                case "GrandMaster":
+                    SkillLevel = 18;
+                    MoveTimeMs = 2000;
+                    SelectedDifficultyText = "✔ GrandMaster";
+                    break;
+                case "Impossible":
+                    SkillLevel = 20;
+                    MoveTimeMs = 5000;
+                    SelectedDifficultyText = "✔ Impossible";
+                    break;
             }
         }
     }

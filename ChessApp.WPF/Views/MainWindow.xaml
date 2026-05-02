@@ -15,78 +15,108 @@
 
         <Grid Visibility="{Binding MenuVisibility}">
 
-        <StackPanel VerticalAlignment="Top" HorizontalAlignment="Right" Margin="20" Orientation="Horizontal">
+            <StackPanel VerticalAlignment="Top" HorizontalAlignment="Right" Margin="20" Orientation="Horizontal">
 
-            <Button Content="Log in / Register" Command="{Binding OpenLoginCommand}"
+                <Button Content="Log in / Register" Command="{Binding OpenLoginCommand}"
                         Visibility="{Binding LoginButtonVisibility}"
                         Background="Transparent" Foreground="#AAAAAA" BorderThickness="1" BorderBrush="#AAAAAA"
                         Padding="15,5" Cursor="Hand" FontSize="14">
-                <Button.Style>
-                    <Style TargetType="Button">
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="Button">
-                                    <Border Background="{TemplateBinding Background}" 
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="{TemplateBinding Background}" 
                                                 BorderBrush="{TemplateBinding BorderBrush}" 
                                                 BorderThickness="{TemplateBinding BorderThickness}" 
                                                 CornerRadius="5">
-                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                    </Border>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                        <Style.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Foreground" Value="White"/>
-                                <Setter Property="BorderBrush" Value="White"/>
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-                </Button.Style>
-            </Button>
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Foreground" Value="White"/>
+                                    <Setter Property="BorderBrush" Value="White"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
 
-            <StackPanel Orientation="Horizontal" Visibility="{Binding UserAreaVisibility}">
-                <TextBlock Text="{Binding CurrentUser.Username, StringFormat='Olá, {0}'}" 
+                <StackPanel Orientation="Horizontal" Visibility="{Binding UserAreaVisibility}">
+                    <TextBlock Text="{Binding CurrentUser.Username, StringFormat='Olá, {0}'}" 
                                Foreground="White" VerticalAlignment="Center" Margin="0,0,15,0" FontSize="16"/>
 
-                <Button Content="Log out" Command="{Binding LogoutCommand}"
+                    <Button Content="Log out" Command="{Binding LogoutCommand}"
                             Background="Transparent" Foreground="#FF6666" BorderThickness="0"
                             VerticalAlignment="Center" Cursor="Hand" FontSize="14" FontWeight="Bold"/>
+                </StackPanel>
             </StackPanel>
-        </StackPanel>
 
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="300">
-            <TextBlock Text="CoreChess" FontSize="60" FontWeight="Bold" Foreground="White" 
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="300">
+                <TextBlock Text="CoreChess" FontSize="60" FontWeight="Bold" Foreground="White" 
                            HorizontalAlignment="Center" Margin="0,0,0,40">
-                <TextBlock.Effect>
-                    <DropShadowEffect Color="Black" BlurRadius="10" ShadowDepth="5" Opacity="0.5"/>
-                </TextBlock.Effect>
-            </TextBlock>
+                    <TextBlock.Effect>
+                        <DropShadowEffect Color="Black" BlurRadius="10" ShadowDepth="5" Opacity="0.5"/>
+                    </TextBlock.Effect>
+                </TextBlock>
 
-            <Button Content="New Game (PvP)" Command="{Binding NewGameCommand}"
+                <Button Content="New Game (PvP)" Command="{Binding NewGameCommand}"
                         Height="50" Margin="0,5" Background="#81b64c" Foreground="White" 
                         FontSize="18" FontWeight="Bold" BorderThickness="0" Cursor="Hand"/>
 
-            <Button Content="Play vs Computer as White" Command="{Binding NewGamePvECommand}"
+                <Button Content="Play vs Computer" Command="{Binding ShowPvEPanelCommand}"
                         Height="50" Margin="0,5" Background="#4F7942" Foreground="White" 
                         FontSize="18" FontWeight="SemiBold" BorderThickness="0" Cursor="Hand"/>
 
-            <Button Content="Play vs Computer as Black" Command="{Binding NewGamePvEBlackCommand}"
-                        Height="50" Margin="0,5" Background="#333333" Foreground="White" 
-                        FontSize="18" FontWeight="SemiBold" BorderThickness="0" Cursor="Hand"/>
+                <StackPanel Visibility="{Binding DifficultyPanelVisibility}" Margin="0,10">
 
-            <Button Content="Match History" Command="{Binding OpenHistoryCommand}"
+                    <TextBlock Text="Choose your color:" Foreground="#AAAAAA" 
+                               HorizontalAlignment="Center" Margin="0,0,0,8" FontSize="14"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Button Content="⬜ White" Command="{Binding SetColorCommand}" CommandParameter="White"
+                                Height="35" Width="120" Margin="0,0,5,0" Background="#81b64c" Foreground="White" BorderThickness="0" Cursor="Hand"/>
+                        <Button Content="⬛ Black" Command="{Binding SetColorCommand}" CommandParameter="Black"
+                                Height="35" Width="120" Margin="5,0,0,0" Background="#333333" Foreground="White" BorderThickness="0" Cursor="Hand"/>
+                    </StackPanel>
+                    <TextBlock Text="{Binding SelectedColorText}" 
+                                   Foreground="#81b64c" HorizontalAlignment="Center" 
+                                   Margin="0,5,0,0" FontSize="13" FontWeight="SemiBold"/>
+
+                    <TextBlock Text="Choose difficulty:" Foreground="#AAAAAA" 
+                               HorizontalAlignment="Center" Margin="0,15,0,8" FontSize="14"/>
+                    <Button Content="Beginner"     Command="{Binding SetDifficultyCommand}" CommandParameter="Beginner"
+                            Height="35" Margin="0,3" Background="#555" Foreground="White" BorderThickness="0" Cursor="Hand"/>
+                    <Button Content="Intermediate" Command="{Binding SetDifficultyCommand}" CommandParameter="Intermediate"
+                            Height="35" Margin="0,3" Background="#555" Foreground="White" BorderThickness="0" Cursor="Hand"/>
+                    <Button Content="Advanced"     Command="{Binding SetDifficultyCommand}" CommandParameter="Advanced"
+                            Height="35" Margin="0,3" Background="#555" Foreground="White" BorderThickness="0" Cursor="Hand"/>
+                    <Button Content="Grand Master" Command="{Binding SetDifficultyCommand}" CommandParameter="GrandMaster"
+                            Height="35" Margin="0,3" Background="#555" Foreground="White" BorderThickness="0" Cursor="Hand"/>
+                    <Button Content="Impossible"   Command="{Binding SetDifficultyCommand}" CommandParameter="Impossible"
+                            Height="35" Margin="0,3" Background="#555" Foreground="White" BorderThickness="0" Cursor="Hand"/>
+                    <TextBlock Text="{Binding SelectedDifficultyText}" 
+                               Foreground="#81b64c" HorizontalAlignment="Center" 
+                               Margin="0,5,0,0" FontSize="13" FontWeight="SemiBold"/>
+                    <Button Content="▶  Start Game" Command="{Binding ConfirmPvECommand}"
+                            Height="45" Margin="0,15,0,0" Background="#81b64c" Foreground="White" 
+                            FontSize="16" FontWeight="Bold" BorderThickness="0" Cursor="Hand"/>
+                </StackPanel>
+
+                <Button Content="Match History" Command="{Binding OpenHistoryCommand}"
                         Visibility="{Binding UserAreaVisibility}"
                         Height="40" Margin="0,20,0,5" Background="#007ACC" Foreground="White" 
                         FontSize="14" BorderThickness="0" Cursor="Hand"/>
 
-            <Button Content="Exit Game" Command="{Binding CloseCommand}"
+                <Button Content="Exit Game" Command="{Binding CloseCommand}"
                         Height="30" Margin="0,10" Background="Transparent" Foreground="#777777" 
                         FontSize="14" BorderThickness="0" Cursor="Hand"/>
-        </StackPanel>
-    </Grid>
+            </StackPanel>
+        </Grid>
 
-    <Grid Visibility="{Binding GameVisibility}">
+        <Grid Visibility="{Binding GameVisibility}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="250" />
