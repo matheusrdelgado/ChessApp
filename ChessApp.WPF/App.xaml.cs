@@ -27,10 +27,13 @@ namespace ChessApp.WPF
         {
             var services = new ServiceCollection();
 
+            // Lê URL base de variável de ambiente (CHESS_API_URL) ou usa padrão local
+            string apiBaseUrl = Environment.GetEnvironmentVariable("CHESS_API_URL") ?? "http://localhost:5000/";
+
             // Regista clientes HTTP e serviços de API (AuthApiService, GameApiService, Tokens)
             services.AddChessApiClients(config =>
             {
-                config.BaseUrl = "http://localhost:5000/";
+                config.BaseUrl = apiBaseUrl;
                 config.TimeoutSeconds = 10;
             });
 

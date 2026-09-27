@@ -81,6 +81,13 @@ namespace ChessApp.WPF.ViewModel
         private Visibility _userAreaVisibility = Visibility.Collapsed;
         public Visibility UserAreaVisibility { get { return _userAreaVisibility; } set { _userAreaVisibility = value; OnPropertyChanged(); } }
 
+        private string _apiStatusText = "● Modo Local";
+        public string ApiStatusText
+        {
+            get => _apiStatusText;
+            set { _apiStatusText = value; OnPropertyChanged(); }
+        }
+
         /// <summary>
         /// Comandos para botoes e interacoes do jogo
         /// </summary>
@@ -149,6 +156,25 @@ namespace ChessApp.WPF.ViewModel
 
             // Subscreve a jogadas recebidas em tempo real (ponto de extensão SignalR)
             _gameSyncService.MoveReceived += OnRemoteMoveReceived;
+
+            // Subscreve a alterações no estado de autenticação
+            _authApiService.AuthenticationStateChanged += isAuthenticated =>
+            {
+                if (!isAuthenticated)
+                {
+                    CurrentUser = null;
+                }
+                else if (!string.IsNullOrEmpty(_authApiService.CurrentUsername))
+                {
+                    CurrentUser = new User(_authApiService.CurrentUsername, string.Empty);
+                }
+            };
+
+            // Restaura automaticamente a sessão se já houver credenciais guardadas no vault DPAPI
+            if (_authApiService.IsAuthenticated && !string.IsNullOrEmpty(_authApiService.CurrentUsername))
+            {
+                CurrentUser = new User(_authApiService.CurrentUsername, string.Empty);
+            }
 
             //  Initialize Board
             Game = new Game();
@@ -684,11 +710,17 @@ namespace ChessApp.WPF.ViewModel
                 if (response.Success && response.Data != null)
                 {
                     _currentGameId = response.Data.GameId;
+                    ApiStatusText = "● Conectado à API";
+                }
+                else
+                {
+                    ApiStatusText = "● Modo Offline";
                 }
             }
             catch
             {
                 // Falha de ligação tratada sem travar o jogo local
+                ApiStatusText = "● Modo Offline";
             }
         }
 
