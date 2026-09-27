@@ -1,8 +1,11 @@
-﻿using ChessApp.Model.Enums;
+using ChessApp.Model.Enums;
 using ChessApp.Model.Interfaces;
 using ChessApp.Model.Model;
 using ChessApp.Model.Services;
+using ChessApp.WPF.ApiClient;
+using ChessApp.WPF.Contracts;
 using ChessApp.WPF.Views;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel; //para ObservableCollection que avisa o WPF se adicionar ou remover quadrados
@@ -19,7 +22,11 @@ namespace ChessApp.WPF.ViewModel
     {
         private readonly IUserService _userService;
         private readonly IGameFileService _gameFileService;
+        private readonly IGameApiService _gameApiService;
+        private readonly IAuthApiService _authApiService;
+        private readonly IGameSyncService _gameSyncService;
         private StockfishService _stockfishService;
+        private string? _currentGameId;
 
         //game proprierties
         public Game Game { get; private set; }
@@ -74,6 +81,13 @@ namespace ChessApp.WPF.ViewModel
         private Visibility _userAreaVisibility = Visibility.Collapsed;
         public Visibility UserAreaVisibility { get { return _userAreaVisibility; } set { _userAreaVisibility = value; OnPropertyChanged(); } }
 
+        private string _apiStatusText = "● Modo Local";
+        public string ApiStatusText
+        {
+            get => _apiStatusText;
+            set { _apiStatusText = value; OnPropertyChanged(); }
+        }
+
         /// <summary>
         /// Comandos para botoes e interacoes do jogo
         /// </summary>
@@ -113,13 +127,54 @@ namespace ChessApp.WPF.ViewModel
         }
 
         /// <summary>
-        /// Construtor do GameViewModel
+        /// Construtor padrão do GameViewModel com resolução via contentor de dependências.
         /// </summary>
-        public GameViewModel()
+        public GameViewModel() : this(
+            App.Services.GetRequiredService<IGameApiService>(),
+            App.Services.GetRequiredService<IAuthApiService>(),
+            App.Services.GetRequiredService<IGameSyncService>(),
+            new UserService(),
+            new GameFileService())
         {
-            //Initialize Services
-            _userService = new UserService();
-            _gameFileService = new GameFileService();
+        }
+
+        /// <summary>
+        /// Construtor parametrizado para permitir testes unitários e substituição de serviços.
+        /// </summary>
+        public GameViewModel(
+            IGameApiService gameApiService,
+            IAuthApiService authApiService,
+            IGameSyncService gameSyncService,
+            IUserService userService,
+            IGameFileService gameFileService)
+        {
+            _gameApiService = gameApiService ?? throw new ArgumentNullException(nameof(gameApiService));
+            _authApiService = authApiService ?? throw new ArgumentNullException(nameof(authApiService));
+            _gameSyncService = gameSyncService ?? throw new ArgumentNullException(nameof(gameSyncService));
+            _userService = userService;
+            _gameFileService = gameFileService;
+
+            // Subscreve a jogadas recebidas em tempo real (ponto de extensão SignalR)
+            _gameSyncService.MoveReceived += OnRemoteMoveReceived;
+
+            // Subscreve a alterações no estado de autenticação
+            _authApiService.AuthenticationStateChanged += isAuthenticated =>
+            {
+                if (!isAuthenticated)
+                {
+                    CurrentUser = null;
+                }
+                else if (!string.IsNullOrEmpty(_authApiService.CurrentUsername))
+                {
+                    CurrentUser = new User(_authApiService.CurrentUsername, string.Empty);
+                }
+            };
+
+            // Restaura automaticamente a sessão se já houver credenciais guardadas no vault DPAPI
+            if (_authApiService.IsAuthenticated && !string.IsNullOrEmpty(_authApiService.CurrentUsername))
+            {
+                CurrentUser = new User(_authApiService.CurrentUsername, string.Empty);
+            }
 
             //  Initialize Board
             Game = new Game();
@@ -177,7 +232,11 @@ namespace ChessApp.WPF.ViewModel
                     CurrentUser = loginWin.LoggedUser; // Gets logged user
                 }
             });
-            LogoutCommand = new RelayCommand(p => CurrentUser = null);
+            LogoutCommand = new RelayCommand(async p =>
+            {
+                CurrentUser = null;
+                await _authApiService.LogoutAsync();
+            });
 
             OpenHistoryCommand = new RelayCommand(p =>
             {
@@ -278,6 +337,11 @@ namespace ChessApp.WPF.ViewModel
 
             MenuVisibility = Visibility.Collapsed;
             GameVisibility = Visibility.Visible;
+
+            // Regista a nova partida na API em segundo plano sem bloquear a UI local
+            string gameMode = IsPvE ? "PvE-Stockfish" : "Local";
+            string? difficulty = IsPvE ? _selectedDifficultyText : null;
+            _ = RegisterGameOnApiAsync(gameMode, PlayerColor.ToString(), difficulty);
 
             if (IsPvE && PlayerColor == Color.Black)
             {
@@ -385,6 +449,7 @@ namespace ChessApp.WPF.ViewModel
 
                     _selectedSquare = null;
 
+                    NotifyRemoteMove();
                     CheckGameOver();
 
                     if (IsGameRunning && IsPvE && Game.CurrentTurn != PlayerColor) //stockfish
@@ -412,6 +477,7 @@ namespace ChessApp.WPF.ViewModel
             if (Game.State == GameState.Checkmate)
             {
                 IsGameRunning = false;
+                string winnerResult = Game.CurrentTurn == Color.White ? "BlackWin" : "WhiteWin";
                 MessageBox.Show($"Checkmate! {Game.CurrentTurn} lost.");
 
                 if (CurrentUser != null) //players statistcs
@@ -420,6 +486,7 @@ namespace ChessApp.WPF.ViewModel
                     _userService.SaveUsers();
                 }
                 AutoSaveGame();
+                _ = ReportFinishGameToApiAsync(winnerResult, "Checkmate");
                 ReturnToMenu();
             }
         }
@@ -469,8 +536,10 @@ namespace ChessApp.WPF.ViewModel
         /// </summary>
         private void Resign()
         {
+            string winnerResult = Game.CurrentTurn == Color.White ? "BlackWin" : "WhiteWin";
             MessageBox.Show($"Game over. {(Game.CurrentTurn == Color.White ? "Black" : "White")} Won!");
             AutoSaveGame();
+            _ = ReportFinishGameToApiAsync(winnerResult, "Resignation");
             ReturnToMenu();
         }
 
@@ -580,6 +649,7 @@ namespace ChessApp.WPF.ViewModel
                 _selectedSquare = null;
                 ResetAllSquares();
                 RefreshBoard();
+                NotifyRemoteMove();
                 CheckGameOver();
 
                 if (IsGameRunning && IsPvE && Game.CurrentTurn != PlayerColor)
@@ -624,5 +694,140 @@ namespace ChessApp.WPF.ViewModel
                     break;
             }
         }
+
+        #region Métodos de Integração com a ChessApi
+
+        /// <summary>
+        /// Regista o início de uma nova partida na API externa e obtém o GameId único.
+        /// Caso a API esteja inacessível, não bloqueia o jogo local.
+        /// </summary>
+        private async Task RegisterGameOnApiAsync(string gameMode, string playerColor, string? difficulty)
+        {
+            try
+            {
+                var dto = new CreateGameDto(gameMode, playerColor, difficulty);
+                var response = await _gameApiService.CreateGameAsync(dto);
+                if (response.Success && response.Data != null)
+                {
+                    _currentGameId = response.Data.GameId;
+                    ApiStatusText = "● Conectado à API";
+                }
+                else
+                {
+                    ApiStatusText = "● Modo Offline";
+                }
+            }
+            catch
+            {
+                // Falha de ligação tratada sem travar o jogo local
+                ApiStatusText = "● Modo Offline";
+            }
+        }
+
+        /// <summary>
+        /// Reporta o resultado final e o histórico de lances da partida à API externa.
+        /// </summary>
+        private async Task ReportFinishGameToApiAsync(string result, string reason)
+        {
+            if (string.IsNullOrEmpty(_currentGameId)) return;
+
+            try
+            {
+                string gameMode = IsPvE ? "PvE-Stockfish" : "Local";
+                var moves = BuildMoveDtos();
+                var finishDto = new FinishGameDto(_currentGameId, gameMode, result, reason, moves, Game.GetCurrentFen());
+                await _gameApiService.FinishGameAsync(finishDto);
+            }
+            catch
+            {
+                // Falha ao reportar tratada de forma silenciosa para garantir a fluidez do jogo local
+            }
+            finally
+            {
+                _currentGameId = null;
+            }
+        }
+
+        /// <summary>
+        /// Converte o histórico de jogadas local para o formato de DTOs esperado pela API.
+        /// </summary>
+        private List<MoveDto> BuildMoveDtos()
+        {
+            var list = new List<MoveDto>();
+            int num = 1;
+            foreach (var m in Game.MoveHistory)
+            {
+                char fromCol = (char)('a' + m.From.Column);
+                int fromRank = 8 - m.From.Row;
+                char toCol = (char)('a' + m.To.Column);
+                int toRank = 8 - m.To.Row;
+
+                list.Add(new MoveDto(
+                    num++,
+                    $"{fromCol}{fromRank}",
+                    $"{toCol}{toRank}",
+                    m.PieceMoved?.PieceType.ToString() ?? "Unknown",
+                    m.Notation,
+                    m.PromotionPiece?.ToString())
+                {
+                    Timestamp = m.DateTime
+                });
+            }
+            return list;
+        }
+
+        /// <summary>
+        /// Ponto de extensão para notificar o adversário remoto sobre um movimento local via SignalR.
+        /// </summary>
+        private void NotifyRemoteMove()
+        {
+            if (_gameSyncService.IsConnected && Game.MoveHistory.Any())
+            {
+                var last = Game.MoveHistory.Last();
+                char fromCol = (char)('a' + last.From.Column);
+                int fromRank = 8 - last.From.Row;
+                char toCol = (char)('a' + last.To.Column);
+                int toRank = 8 - last.To.Row;
+
+                var moveDto = new MoveDto(
+                    Game.MoveHistory.Count,
+                    $"{fromCol}{fromRank}",
+                    $"{toCol}{toRank}",
+                    last.PieceMoved?.PieceType.ToString() ?? "Unknown",
+                    last.Notation,
+                    last.PromotionPiece?.ToString())
+                {
+                    Timestamp = last.DateTime
+                };
+
+                _ = _gameSyncService.SendMoveAsync(moveDto);
+            }
+        }
+
+        /// <summary>
+        /// Manipulador invocado quando uma jogada remota é recebida via SignalR (PvP online).
+        /// Aplica o movimento no tabuleiro local sem alterar a lógica de regras.
+        /// </summary>
+        private void OnRemoteMoveReceived(MoveDto move)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                if (!IsGameRunning) return;
+                try
+                {
+                    var (from, to) = ParseStockfishMove(move.From + move.To);
+                    Game.MakeMove(from, to);
+                    ResetAllSquares();
+                    RefreshBoard();
+                    CheckGameOver();
+                }
+                catch
+                {
+                    // Ignora movimentos remotos inválidos
+                }
+            });
+        }
+
+        #endregion
     }
 }

@@ -1,75 +1,117 @@
-﻿using ChessApp.Model.Model;
-using ChessApp.Model.Services;
 using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using ChessApp.WPF.Views;
+using ChessApp.Model.Model;
+using ChessApp.WPF.ApiClient;
+using ChessApp.WPF.Contracts;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ChessApp.WPF.ViewModel
 {
+    /// <summary>
+    /// ViewModel responsável pelo ecrã de autenticação, comunicando com a API externa
+    /// através de IAuthApiService e tratando eventuais falhas de conectividade.
+    /// </summary>
     public class LoginViewModel : BaseViewModel
     {
-        private readonly UserService _userService;
+        private readonly IAuthApiService _authApiService;
 
-        public User LoggedUser { get; private set; }
+        public User? LoggedUser { get; private set; }
 
-        public event Action<bool> OnRequestClose; //tells view to close
+        public event Action<bool>? OnRequestClose;
 
-        private string _username;
+        private string _username = string.Empty;
         public string Username
         {
-            get { return _username; }
+            get => _username;
             set { _username = value; OnPropertyChanged(); }
         }
 
-        public ICommand LoginCommand { get; set; }
-        public ICommand OpenRegisterCommand { get; set; }
-
-        public LoginViewModel()
+        private bool _isBusy;
+        public bool IsBusy
         {
-            _userService = new UserService();
+            get => _isBusy;
+            set { _isBusy = value; OnPropertyChanged(); }
+        }
 
-            LoginCommand = new RelayCommand(p => PerformLogin(p));
-            OpenRegisterCommand = new RelayCommand(p => OpenRegister());
+        public ICommand LoginCommand { get; }
+        public ICommand OpenRegisterCommand { get; }
+
+        public LoginViewModel() : this(App.Services.GetRequiredService<IAuthApiService>())
+        {
+        }
+
+        public LoginViewModel(IAuthApiService authApiService)
+        {
+            _authApiService = authApiService ?? throw new ArgumentNullException(nameof(authApiService));
+
+            LoginCommand = new RelayCommand(async p => await PerformLoginAsync(p), _ => !IsBusy);
+            OpenRegisterCommand = new RelayCommand(_ => OpenRegister(), _ => !IsBusy);
         }
 
         /// <summary>
-        /// Metodo para realizar login
+        /// Realiza o login na API de forma assíncrona.
+        /// Se a API estiver offline, oferece ao utilizador a opção de jogar no modo local.
         /// </summary>
-        /// <param name="parameter"></param>
-        private void PerformLogin(object parameter)
+        private async Task PerformLoginAsync(object? parameter)
         {
             var passwordBox = parameter as PasswordBox;
             var password = passwordBox?.Password;
 
             if (string.IsNullOrWhiteSpace(Username) || string.IsNullOrWhiteSpace(password))
             {
-                MessageBox.Show("Missing username or password.");
+                MessageBox.Show("Preencha o utilizador e a palavra-passe.", "Aviso", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
-            var user = _userService.Login(Username, password);
+            IsBusy = true;
+            try
+            {
+                var response = await _authApiService.LoginAsync(new LoginRequestDto(Username.Trim(), password));
 
-            if (user != null) // Login successful
-            {
-                LoggedUser = user;
-                OnRequestClose?.Invoke(true); 
+                if (response.Success && response.Data != null)
+                {
+                    // Utilizador autenticado com sucesso via JWT
+                    LoggedUser = new User(response.Data.Username, string.Empty);
+                    OnRequestClose?.Invoke(true);
+                    return;
+                }
+
+                if (response.IsNetworkError)
+                {
+                    // Tratamento amigável de falha de rede sem bloquear o jogo local
+                    var result = MessageBox.Show(
+                        $"{response.Message}\n\nDeseja continuar no modo Convidado / Offline para jogar localmente?",
+                        "Servidor Indisponível",
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Question);
+
+                    if (result == MessageBoxResult.Yes)
+                    {
+                        LoggedUser = new User(Username.Trim(), string.Empty);
+                        OnRequestClose?.Invoke(true);
+                    }
+                    return;
+                }
+
+                // Erro de credenciais ou validação
+                MessageBox.Show(response.Message ?? "Utilizador ou palavra-passe incorretos.", "Erro de Login", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-            else // Login failed
+            finally
             {
-                MessageBox.Show("Incorrect username or password.");
+                IsBusy = false;
             }
         }
 
         /// <summary>
-        /// metodo para abrir a janela de registo
+        /// Abre a janela de registo de nova conta
         /// </summary>
         private void OpenRegister()
         {
             var registerWin = new Views.RegisterWindow();
             registerWin.ShowDialog();
-            _userService.LoadUsers();
         }
     }
 }

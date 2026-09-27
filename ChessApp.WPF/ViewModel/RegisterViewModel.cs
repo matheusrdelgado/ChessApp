@@ -1,71 +1,98 @@
-﻿using ChessApp.Model.Services;
 using System;
+using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
-using ChessApp.WPF.Views;
+using ChessApp.WPF.ApiClient;
+using ChessApp.WPF.Contracts;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ChessApp.WPF.ViewModel
 {
+    /// <summary>
+    /// ViewModel responsável pelo registo de novos utilizadores via API externa.
+    /// </summary>
     public class RegisterViewModel : BaseViewModel
     {
-        private readonly UserService _userService;
+        private readonly IAuthApiService _authApiService;
 
-        public event Action OnRequestClose;
+        public event Action? OnRequestClose;
 
-        private string _username;
+        private string _username = string.Empty;
         public string Username
         {
-            get { return _username; }
+            get => _username;
             set { _username = value; OnPropertyChanged(); }
         }
 
-        public ICommand RegisterCommand { get; set; }
-        public ICommand CancelCommand { get; set; }
-
-        public RegisterViewModel()
+        private bool _isBusy;
+        public bool IsBusy
         {
-            _userService = new UserService();
-            RegisterCommand = new RelayCommand(p => PerformRegister(p));
-            CancelCommand = new RelayCommand(p => OnRequestClose?.Invoke());
+            get => _isBusy;
+            set { _isBusy = value; OnPropertyChanged(); }
+        }
+
+        public ICommand RegisterCommand { get; }
+        public ICommand CancelCommand { get; }
+
+        public RegisterViewModel() : this(App.Services.GetRequiredService<IAuthApiService>())
+        {
+        }
+
+        public RegisterViewModel(IAuthApiService authApiService)
+        {
+            _authApiService = authApiService ?? throw new ArgumentNullException(nameof(authApiService));
+
+            RegisterCommand = new RelayCommand(async p => await PerformRegisterAsync(p), _ => !IsBusy);
+            CancelCommand = new RelayCommand(_ => OnRequestClose?.Invoke(), _ => !IsBusy);
         }
 
         /// <summary>
-        /// faz o registo do utilizador
+        /// Efetua o registo de utilizador na API de forma assíncrona.
         /// </summary>
-        /// <param name="parameter"></param>
-        private void PerformRegister(object parameter)
+        private async Task PerformRegisterAsync(object? parameter)
         {
-            var window = parameter as Views.RegisterWindow; // Aceder à janela de registo para obter as passwords
+            var window = parameter as Views.RegisterWindow;
             if (window == null) return;
 
             string p1 = window.txtRegPass.Password;
             string p2 = window.txtRegConfirm.Password;
 
-            if (string.IsNullOrWhiteSpace(Username) || string.IsNullOrWhiteSpace(p1)) // Verifica se o username ou password estão vazios
+            if (string.IsNullOrWhiteSpace(Username) || string.IsNullOrWhiteSpace(p1))
             {
-                MessageBox.Show("Missing username or password.");
+                MessageBox.Show("Preencha o utilizador e a palavra-passe.", "Aviso", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
-            if (p1 != p2) // Verifica se as passwords coincidem
+            if (p1 != p2)
             {
-                MessageBox.Show("Passwords must match!");
+                MessageBox.Show("As palavras-passe não coincidem.", "Aviso", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
-            if (_userService.Register(Username, p1)) // Tenta registar o utilizador
+            IsBusy = true;
+            try
             {
-                MessageBox.Show("Successfully registered. Please log in");
-                _userService.SaveUsers();
-                OnRequestClose?.Invoke();
+                var response = await _authApiService.RegisterAsync(new RegisterRequestDto(Username.Trim(), p1));
+
+                if (response.Success)
+                {
+                    MessageBox.Show("Registo efetuado com sucesso! Por favor, inicie sessão.", "Sucesso", MessageBoxButton.OK, MessageBoxImage.Information);
+                    OnRequestClose?.Invoke();
+                    return;
+                }
+
+                if (response.IsNetworkError)
+                {
+                    MessageBox.Show(response.Message, "Falha de Ligação", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                MessageBox.Show(response.Message ?? "Este nome de utilizador já se encontra registado.", "Erro de Registo", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-            else // Se o registo falhar, informa que o username já existe
+            finally
             {
-                MessageBox.Show("This username already exists.");
+                IsBusy = false;
             }
         }
-
-
     }
 }
